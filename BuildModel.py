@@ -7,6 +7,11 @@ import theano
 from theano import tensor as T
 import numpy as np
 from LogisticRegression import *
+import six.moves.cPickle as pickle
+import gzip
+import os
+import sys
+import timeit
 
 class BuildModel(object):
     def __init__(self,learning_rate=0.13, n_epochs=1000,

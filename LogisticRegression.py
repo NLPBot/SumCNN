@@ -1,3 +1,8 @@
+"""
+This code is adapted from:
+http://deeplearning.net/tutorial/code/logistic_sgd.py
+"""
+
 import theano
 from theano import tensor as T
 import numpy as np

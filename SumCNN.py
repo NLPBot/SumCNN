@@ -7,6 +7,11 @@ import theano
 from theano import tensor as T
 import numpy as np
 from BuildModel import *
+import six.moves.cPickle as pickle
+import gzip
+import os
+import sys
+import timeit
 
 def sgd_optimization_sum(learning_rate=0.13, n_epochs=1000,
                            dataset='sum.pkl.gz',
@@ -116,6 +121,8 @@ def sgd_optimization_sum(learning_rate=0.13, n_epochs=1000,
                 break
 
     end_time = timeit.default_timer()
+    
+    """
     print(
         (
             'Optimization complete with best validation score of %f %%,'
@@ -123,11 +130,12 @@ def sgd_optimization_sum(learning_rate=0.13, n_epochs=1000,
         )
         % (best_validation_loss * 100., test_score * 100.)
     )
-    print('The code run for %d epochs, with %f epochs/sec' % (
+    print('The code run for %d epochs, with %f epochs/sec' % (  \
         epoch, 1. * epoch / (end_time - start_time)))
-    print(('The code for file ' +
-           os.path.split(__file__)[1] +
+    print(('The code for file ' +   \
+           os.path.split(__file__)[1] + \
            ' ran for %.1fs' % ((end_time - start_time))), file=sys.stderr)
+    """
 
 def predict():
     """
