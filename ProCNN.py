@@ -1,86 +1,157 @@
+"""
+This code is adapted from:
+http://deeplearning.net/tutorial/code/logistic_sgd.py
+"""
+
 import theano
 from theano import tensor as T
 import numpy as np
+from BuildModel import *
 
-#################################### Helper methods ####################################
-
-
-def sgd_updates_adadelta(params,cost,rho=0.95,epsilon=1e-6,norm_lim=9,word_vec_name='Words'):
+def sgd_optimization_sum(learning_rate=0.13, n_epochs=1000,
+                           dataset='sum.pkl.gz',
+                           batch_size=600):
     """
-    adadelta update rule, mostly from
-    https://groups.google.com/forum/#!topic/pylearn-dev/3QbKtCumAW4 (for Adadelta)
+    Demonstrate stochastic gradient descent optimization of a log-linear
+    model
+
+    :type learning_rate: float
+    :param learning_rate: learning rate used (factor for the stochastic
+                          gradient)
+
+    :type n_epochs: int
+    :param n_epochs: maximal number of epochs to run the optimizer
+
+    :type dataset: string
+    :param dataset: the path of the summary dataset file from
     """
-    updates = OrderedDict({})
-    exp_sqr_grads = OrderedDict({})
-    exp_sqr_ups = OrderedDict({})
-    gparams = []
-    for param in params:
-        empty = np.zeros_like(param.get_value())
-        exp_sqr_grads[param] = theano.shared(value=as_floatX(empty),name="exp_grad_%s" % param.name)
-        gp = T.grad(cost, param)
-        exp_sqr_ups[param] = theano.shared(value=as_floatX(empty), name="exp_grad_%s" % param.name)
-        gparams.append(gp)
-    for param, gp in zip(params, gparams):
-        exp_sg = exp_sqr_grads[param]
-        exp_su = exp_sqr_ups[param]
-        up_exp_sg = rho * exp_sg + (1 - rho) * T.sqr(gp)
-        updates[exp_sg] = up_exp_sg
-        step =  -(T.sqrt(exp_su + epsilon) / T.sqrt(up_exp_sg + epsilon)) * gp
-        updates[exp_su] = rho * exp_su + (1 - rho) * T.sqr(step)
-        stepped_param = param + step
-        if (param.get_value(borrow=True).ndim == 2) and (param.name!='Words'):
-            col_norms = T.sqrt(T.sum(T.sqr(stepped_param), axis=0))
-            desired_norms = T.clip(col_norms, 0, T.sqrt(norm_lim))
-            scale = desired_norms / (1e-7 + col_norms)
-            updates[param] = stepped_param * scale
-        else:
-            updates[param] = stepped_param      
-    return updates 
 
+    ###############
+    # MODEL SETUP #
+    ###############
+    models = BuildModel( 	learning_rate=0.13, 
+    						n_epochs=1000,
+                			dataset='sum.pkl.gz',
+                			batch_size=600 )
 
-#################################### setup ####################################
+    ###############
+    # TRAIN MODEL #
+    ###############
+    print('... training the model')
+    # early-stopping parameters
+    patience = 5000  # look as this many examples regardless
+    patience_increase = 2  # wait this much longer when a new best is
+                                  # found
+    improvement_threshold = 0.995  # a relative improvement of this much is
+                                  # considered significant
+    validation_frequency = min(models.n_train_batches, patience // 2)
+                                  # go through this many
+                                  # minibatche before checking the network
+                                  # on the validation set; in this case we
+                                  # check every epoch
 
-# initialize dims
-v_size = 5
-b_0_size = 1000
-b_1_size = 1000
-b_2_size = 1
+    best_validation_loss = numpy.inf
+    test_score = 0.
+    start_time = timeit.default_timer()
 
-rng = np.random.RandomState(3435)
+    done_looping = False
+    epoch = 0
+    while (epoch < n_epochs) and (not done_looping):
+        epoch = epoch + 1
+        for minibatch_index in range(models.n_train_batches):
 
-W_0 = theano.shared(rng.randn(v_size,b_0_size), name='W_0') 
-b_0 = theano.shared(rng.randn(b_0_size,), name='b_0') # 
+            minibatch_avg_cost = models.train_model(minibatch_index)
+            # iteration number
+            iter = (epoch - 1) * models.n_train_batches + minibatch_index
 
-W_1 = theano.shared(rng.randn(b_0_size,b_1_size), name='W_1') 
-b_1 = theano.shared(rng.randn(b_1_size,), name='b_1') 
+            if (iter + 1) % validation_frequency == 0:
+                # compute zero-one loss on validation set
+                validation_losses = [models.validate_model(i)
+                                     for i in range(models.n_valid_batches)]
+                this_validation_loss = numpy.mean(validation_losses)
 
-W_2 = theano.shared(rng.randn(b_1_size,b_2_size), name='W_2') 
-b_2 = theano.shared(rng.randn(b_2_size,), name='b_2') 
+                print(
+                    'epoch %i, minibatch %i/%i, validation error %f %%' %
+                    (
+                        epoch,
+                        minibatch_index + 1,
+                        models.n_train_batches,
+                        this_validation_loss * 100.
+                    )
+                )
 
-input_vec = T.vector('input_vec') # (5,1)
+                # if we got the best validation score until now
+                if this_validation_loss < best_validation_loss:
+                    #improve patience if loss improvement is good enough
+                    if this_validation_loss < best_validation_loss *  \
+                       improvement_threshold:
+                        patience = max(patience, iter * patience_increase)
 
-layer0_output = T.nnet.sigmoid(T.dot(input_vec, W_0) + b_0)
-layer1_output = T.nnet.sigmoid(theano.dot(layer0_output, W_1) + b_1)
-layer2_output = T.nnet.sigmoid(theano.dot(layer1_output, W_2) + b_2)
+                    best_validation_loss = this_validation_loss
+                    # test it on the test set
 
-#values, updates = theano.scan(OneStep, outputs_info=input, n_steps=10)
-MLP = theano.function([input_vec], layer2_output)
+                    test_losses = [models.test_model(i)
+                                   for i in range(models.n_test_batches)]
+                    test_score = numpy.mean(test_losses)
 
-print(MLP(np.asarray([1,0,1,1,0])))
+                    print(
+                        (
+                            '     epoch %i, minibatch %i/%i, test error of'
+                            ' best model %f %%'
+                        ) %
+                        (
+                            epoch,
+                            minibatch_index + 1,
+                            models.n_train_batches,
+                            test_score * 100.
+                        )
+                    )
 
+                    # save the best model
+                    with open('best_model.pkl', 'wb') as f:
+                        pickle.dump(models.classifier, f)
 
-#################################### training ####################################
-y = T.ivector('y')
+            if patience <= iter:
+                done_looping = True
+                break
 
-# cost function
+    end_time = timeit.default_timer()
+    print(
+        (
+            'Optimization complete with best validation score of %f %%,'
+            'with test performance %f %%'
+        )
+        % (best_validation_loss * 100., test_score * 100.)
+    )
+    print('The code run for %d epochs, with %f epochs/sec' % (
+        epoch, 1. * epoch / (end_time - start_time)))
+    print(('The code for file ' +
+           os.path.split(__file__)[1] +
+           ' ran for %.1fs' % ((end_time - start_time))), file=sys.stderr)
 
-# 
+def predict():
+    """
+    An example of how to load a trained model and use it
+    to predict labels.
+    """
 
+    # load the saved model
+    classifier = pickle.load(open('best_model.pkl'))
 
+    # compile a predictor function
+    predict_model = theano.function(
+        inputs=[classifier.input],
+        outputs=classifier.y_pred)
 
-#################################### prediction ####################################
+    # We can test it on some examples from test test
+    dataset='mnist.pkl.gz'
+    datasets = load_data(dataset)
+    test_set_x, test_set_y = datasets[2]
+    test_set_x = test_set_x.get_value()
 
+    predicted_values = predict_model(test_set_x[:10])
+    print("Predicted values for the first 10 examples in test set:")
+    print(predicted_values)
 
-
-
-
+if __name__ == '__main__':
+    sgd_optimization_sum()
