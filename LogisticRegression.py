@@ -53,6 +53,7 @@ class LogisticRegression(object):
         self.y_pred = T.argmax(self.p_y_given_x, axis=1)
         # parameters of the model
         self.params = [self.W, self.b]
+
     def negative_log_likelihood(self, y):
         """Return the mean of the negative log-likelihood of the prediction
         of this model under a given target distribution.
@@ -77,6 +78,7 @@ class LogisticRegression(object):
         # the mean (across minibatch examples) of the elements in v,
         # i.e., the mean log-likelihood across the minibatch.
         return -T.mean(T.log(self.p_y_given_x)[T.arange(y.shape[0]), y])
+        
     def errors(self, y):
         """Return a float representing the number of errors in the minibatch ;
 	    zero one loss over the size of the minibatch
