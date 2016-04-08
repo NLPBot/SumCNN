@@ -6,6 +6,7 @@ http://deeplearning.net/tutorial/code/logistic_sgd.py
 import theano
 from theano import tensor as T
 import numpy as np
+import numpy
 from LogisticRegression import *
 import six.moves.cPickle as pickle
 import gzip
@@ -14,7 +15,7 @@ import sys
 import timeit
 
 class BuildModel(object):
-    def __init__(self,learning_rate=0.13, n_epochs=1000,
+    def __init__(self,learning_rate=0.13, n_epochs=10000000,
                            dataset='sum.pkl.gz',
                            batch_size=600):
         """
@@ -38,9 +39,9 @@ class BuildModel(object):
         test_set_x, test_set_y = datasets[2]
 
         # compute number of minibatches for training, validation and testing
-        self.n_train_batches = train_set_x.get_value(borrow=True).shape[0] # batch_size
-        self.n_valid_batches = valid_set_x.get_value(borrow=True).shape[0] # batch_size
-        self.n_test_batches = test_set_x.get_value(borrow=True).shape[0] # batch_size
+        self.n_train_batches = train_set_x.get_value(borrow=True).shape[0] // batch_size
+        self.n_valid_batches = valid_set_x.get_value(borrow=True).shape[0] // batch_size
+        self.n_test_batches = test_set_x.get_value(borrow=True).shape[0] // batch_size
 
         ######################
         # BUILD ACTUAL MODEL #
@@ -57,18 +58,16 @@ class BuildModel(object):
 
         # construct the logistic regression class
         # Each MNIST image has size 28*28
-        self.classifier = LogisticRegression(input=x, n_in=28 * 28, n_out=10)
-
-
+        self.classifier = LogisticRegression(input=x, n_in=10, n_out=1)
 
         # cost = negative log likelihood in symbolic format
-        cost = classifier.negative_log_likelihood(y)
+        cost = self.classifier.negative_log_likelihood(y)
 
         # compiling a Theano function that computes the mistakes that are made by
         # the model on a minibatch
         self.test_model = theano.function(
             inputs=[index],
-            outputs=classifier.errors(y),
+            outputs=self.classifier.errors(y),
             givens={
                 x: test_set_x[index * batch_size: (index + 1) * batch_size],
                 y: test_set_y[index * batch_size: (index + 1) * batch_size]
@@ -77,7 +76,7 @@ class BuildModel(object):
 
         self.validate_model = theano.function(
             inputs=[index],
-            outputs=classifier.errors(y),
+            outputs=self.classifier.errors(y),
             givens={
                 x: valid_set_x[index * batch_size: (index + 1) * batch_size],
                 y: valid_set_y[index * batch_size: (index + 1) * batch_size]
@@ -85,16 +84,16 @@ class BuildModel(object):
         )
 
         # compute the gradient of cost with respect to theta = (W,b)
-        g_W = T.grad(cost=cost, wrt=classifier.W)
-        g_b = T.grad(cost=cost, wrt=classifier.b)
+        g_W = T.grad(cost=cost, wrt=self.classifier.W)
+        g_b = T.grad(cost=cost, wrt=self.classifier.b)
 
         ############################################# insert MLP ####################
 
         # start-snippet-3
         # specify how to update the parameters of the model as a list of
         # (variable, update expression) pairs.
-        updates = [(classifier.W, classifier.W - learning_rate * g_W),
-                   (classifier.b, classifier.b - learning_rate * g_b)]
+        updates = [(self.classifier.W, self.classifier.W - learning_rate * g_W),
+                   (self.classifier.b, self.classifier.b - learning_rate * g_b)]
 
         # compiling a Theano function `train_model` that returns the cost, but in
         # the same time updates the parameter of the model based on the rules
@@ -119,12 +118,34 @@ class BuildModel(object):
         # LOAD DATA #
         #############
 
+        # Download the MNIST dataset if it is not present
+        data_dir, data_file = os.path.split(dataset)
+        if data_dir == "" and not os.path.isfile(dataset):
+            # Check if dataset is in the data directory.
+            new_path = os.path.join(
+                os.path.split(__file__)[0],
+                "data",
+                dataset
+            )
+            if os.path.isfile(new_path) or data_file == 'sum.pkl.gz':
+                dataset = new_path
+
         # Load the dataset
         with gzip.open(dataset, 'rb') as f:
             try:
                 train_set, valid_set, test_set = pickle.load(f, encoding='latin1')
             except:
                 train_set, valid_set, test_set = pickle.load(f)
+
+
+        left = np.arange(100)
+        left.shape=(10,10)
+        right = np.arange(1)
+
+        train_set = ( left, right )
+        valid_set = ( left, right )
+        test_set = ( left, right )
+
         # train_set, valid_set, test_set format: tuple(input, target)
         # input is a numpy.ndarray of 2 dimensions (a matrix)
         # where each row corresponds to a sentence vector. target is a

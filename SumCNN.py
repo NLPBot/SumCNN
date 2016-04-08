@@ -13,7 +13,7 @@ import os
 import sys
 import timeit
 
-def sgd_optimization_sum(learning_rate=0.13, n_epochs=1000,
+def sgd_optimization_sum(learning_rate=0.13, n_epochs=10000000,
                            dataset='sum.pkl.gz',
                            batch_size=600):
     """
@@ -122,7 +122,6 @@ def sgd_optimization_sum(learning_rate=0.13, n_epochs=1000,
 
     end_time = timeit.default_timer()
     
-    """
     print(
         (
             'Optimization complete with best validation score of %f %%,'
@@ -132,10 +131,7 @@ def sgd_optimization_sum(learning_rate=0.13, n_epochs=1000,
     )
     print('The code run for %d epochs, with %f epochs/sec' % (  \
         epoch, 1. * epoch / (end_time - start_time)))
-    print(('The code for file ' +   \
-           os.path.split(__file__)[1] + \
-           ' ran for %.1fs' % ((end_time - start_time))), file=sys.stderr)
-    """
+    #print(('The code for file '+os.path.split(__file__)[1] + ' ran for %.1fs' % ((end_time - start_time))), file=sys.stderr)
 
 def predict():
     """
@@ -152,7 +148,7 @@ def predict():
         outputs=classifier.y_pred)
 
     # We can test it on some examples from test test
-    dataset='mnist.pkl.gz'
+    dataset='sum.pkl.gz'
     datasets = load_data(dataset)
     test_set_x, test_set_y = datasets[2]
     test_set_x = test_set_x.get_value()
