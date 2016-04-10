@@ -17,7 +17,7 @@ import timeit
 class BuildModel(object):
     def __init__(self,learning_rate=0.13, n_epochs=10000000,
                            dataset='sum.pkl.gz',
-                           batch_size=600):
+                           batch_size=100):
         """
         stochastic gradient descent optimization of a log-linear model
 
@@ -29,19 +29,35 @@ class BuildModel(object):
         :param n_epochs: maximal number of epochs to run the optimizer
 
         :type dataset: string
-        :param dataset: the path of the summary dataset file from
+        :param dataset: the path of the summary dataset file
         """
 
-        datasets = self.load_data(dataset)
+        ######################
+        #   Preparing Data   #
+        ######################
+        print('\n... Preparing Data')
+
+        datasets = self.load_data(dataset,batch_size)
 
         train_set_x, train_set_y = datasets[0]
         valid_set_x, valid_set_y = datasets[1]
         test_set_x, test_set_y = datasets[2]
 
+        print( 'train_set_x dimensions ' + str(train_set_x.get_value(borrow=True).shape[0]) + ' ' + 
+            str(train_set_x.get_value(borrow=True).shape[1]) )
+        print( 'valid_set_x dimensions ' + str(valid_set_x.get_value(borrow=True).shape[0]) + ' ' + 
+            str(valid_set_x.get_value(borrow=True).shape[1]) )
+        print( 'test_set_x dimensions ' + str(test_set_x.get_value(borrow=True).shape[0]) + ' ' + 
+            str(test_set_x.get_value(borrow=True).shape[1]) )
+
         # compute number of minibatches for training, validation and testing
         self.n_train_batches = train_set_x.get_value(borrow=True).shape[0] // batch_size
         self.n_valid_batches = valid_set_x.get_value(borrow=True).shape[0] // batch_size
         self.n_test_batches = test_set_x.get_value(borrow=True).shape[0] // batch_size
+
+        print( 'n_train_batches ' + str(self.n_train_batches) )
+        print( 'n_valid_batches ' + str(self.n_valid_batches) )
+        print( 'n_test_batches ' + str(self.n_test_batches) +'\n' )
 
         ######################
         # BUILD ACTUAL MODEL #
@@ -53,18 +69,33 @@ class BuildModel(object):
 
         # generate symbolic variables for input (x and y represent a
         # minibatch)
-        x = T.matrix('x')  # data, presented as rasterized images
-        y = T.ivector('y')  # labels, presented as 1D vector of [int] labels
+        x = T.matrix('x')  # data
+        y = T.ivector('y')  # probs, presented as 1D vector of [int] labels
 
         # construct the logistic regression class
-        # Each MNIST image has size 28*28
-        self.classifier = LogisticRegression(input=x, n_in=10, n_out=1)
+        n_in = 10
+        n_out = 10
+        print( 'n_in ' + str(n_in) )
+        print( 'n_out ' + str(n_out) + '\n' )
+        """
+        if not(n_in==train_set_x.get_value(borrow=True).shape[1]):
+            print( 'n_in is different from train_set_x column dimensions!!!\n' )
+            return
+        if not(n_in==valid_set_x.get_value(borrow=True).shape[1]):
+            print( 'n_in is different from valid_set_x column dimensions!!!' )
+            return 
+        if not(n_in==test_set_x.get_value(borrow=True).shape[1]):
+            print( 'n_in is different from test_set_x column dimensions!!!' )  
+            return
+        """
+        self.classifier = LogisticRegression(input=x, n_in=n_in, n_out=n_out)
 
         # cost = negative log likelihood in symbolic format
-        cost = self.classifier.negative_log_likelihood(y)
+        cost = self.classifier.errors(y)
 
         # compiling a Theano function that computes the mistakes that are made by
         # the model on a minibatch
+        # batch_size == row size == weight vector row size
         self.test_model = theano.function(
             inputs=[index],
             outputs=self.classifier.errors(y),
@@ -84,18 +115,21 @@ class BuildModel(object):
         )
 
         # compute the gradient of cost with respect to theta = (W,b)
-        g_W = T.grad(cost=cost, wrt=self.classifier.W)
-        g_b = T.grad(cost=cost, wrt=self.classifier.b)
+        g_W0 = T.grad(cost=cost, wrt=self.classifier.W0)
+        g_b0 = T.grad(cost=cost, wrt=self.classifier.b0)
+        g_W1 = T.grad(cost=cost, wrt=self.classifier.W1)
+        g_b1 = T.grad(cost=cost, wrt=self.classifier.b1)
 
         ############################################# insert MLP ####################
 
-        # start-snippet-3
         # specify how to update the parameters of the model as a list of
         # (variable, update expression) pairs.
-        updates = [(self.classifier.W, self.classifier.W - learning_rate * g_W),
-                   (self.classifier.b, self.classifier.b - learning_rate * g_b)]
+        updates = [(self.classifier.W0, self.classifier.W0 - learning_rate * g_W0),
+                   (self.classifier.b0, self.classifier.b0 - learning_rate * g_b0),
+                   (self.classifier.W1, self.classifier.W1 - learning_rate * g_W1),
+                   (self.classifier.b1, self.classifier.b1 - learning_rate * g_b1)]
 
-        # compiling a Theano function `train_model` that returns the cost, but in
+        # compiling a Theano function `train_model` that returns the cost, but at
         # the same time updates the parameter of the model based on the rules
         # defined in `updates`
         self.train_model = theano.function(
@@ -108,7 +142,7 @@ class BuildModel(object):
             }
         )
 
-    def load_data(self,dataset):
+    def load_data(self,dataset,batch_size):
         ''' Loads the dataset
         :type dataset: string
         :param dataset: the path to the sum dataset 
@@ -137,13 +171,18 @@ class BuildModel(object):
             except:
                 train_set, valid_set, test_set = pickle.load(f)
 
-
-        left = np.arange(100)
-        left.shape=(10,10)
-        right = np.arange(1)
-
+        row = batch_size
+        col = 10
+        left = np.random.uniform(0,1,(row,col))
+        right = np.random.uniform(0,1,(col))
         train_set = ( left, right )
+
+        left = np.random.uniform(0,1,(row,col))
+        right = np.random.uniform(0,1,(col))
         valid_set = ( left, right )
+
+        left = np.random.uniform(0,1,(row,col))
+        right = np.random.uniform(0,1,(col))
         test_set = ( left, right )
 
         # train_set, valid_set, test_set format: tuple(input, target)

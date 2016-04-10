@@ -15,7 +15,7 @@ import timeit
 
 def sgd_optimization_sum(learning_rate=0.13, n_epochs=10000000,
                            dataset='sum.pkl.gz',
-                           batch_size=600):
+                           batch_size=100):
     """
     Demonstrate stochastic gradient descent optimization of a log-linear
     model
@@ -37,7 +37,7 @@ def sgd_optimization_sum(learning_rate=0.13, n_epochs=10000000,
     models = BuildModel( 	learning_rate=0.13, 
     						n_epochs=1000,
                 			dataset='sum.pkl.gz',
-                			batch_size=600 )
+                			batch_size=batch_size )
 
     ###############
     # TRAIN MODEL #
@@ -64,7 +64,6 @@ def sgd_optimization_sum(learning_rate=0.13, n_epochs=10000000,
     while (epoch < n_epochs) and (not done_looping):
         epoch = epoch + 1
         for minibatch_index in range(models.n_train_batches):
-
             minibatch_avg_cost = models.train_model(minibatch_index)
             # iteration number
             iter = (epoch - 1) * models.n_train_batches + minibatch_index
@@ -84,7 +83,6 @@ def sgd_optimization_sum(learning_rate=0.13, n_epochs=10000000,
                         this_validation_loss * 100.
                     )
                 )
-
                 # if we got the best validation score until now
                 if this_validation_loss < best_validation_loss:
                     #improve patience if loss improvement is good enough
@@ -98,7 +96,6 @@ def sgd_optimization_sum(learning_rate=0.13, n_epochs=10000000,
                     test_losses = [models.test_model(i)
                                    for i in range(models.n_test_batches)]
                     test_score = numpy.mean(test_losses)
-
                     print(
                         (
                             '     epoch %i, minibatch %i/%i, test error of'
@@ -111,9 +108,8 @@ def sgd_optimization_sum(learning_rate=0.13, n_epochs=10000000,
                             test_score * 100.
                         )
                     )
-
                     # save the best model
-                    with open('best_model.pkl', 'wb') as f:
+                    with open('model.pkl', 'wb') as f:
                         pickle.dump(models.classifier, f)
 
             if patience <= iter:
@@ -135,12 +131,11 @@ def sgd_optimization_sum(learning_rate=0.13, n_epochs=10000000,
 
 def predict():
     """
-    An example of how to load a trained model and use it
-    to predict labels.
+    load a trained model and use it to predict prob.
     """
 
     # load the saved model
-    classifier = pickle.load(open('best_model.pkl'))
+    classifier = pickle.load(open('model.pkl'))
 
     # compile a predictor function
     predict_model = theano.function(
@@ -148,14 +143,19 @@ def predict():
         outputs=classifier.y_pred)
 
     # We can test it on some examples from test test
+    """
     dataset='sum.pkl.gz'
     datasets = load_data(dataset)
     test_set_x, test_set_y = datasets[2]
     test_set_x = test_set_x.get_value()
-
-    predicted_values = predict_model(test_set_x[:10])
-    print("Predicted values for the first 10 examples in test set:")
+    """
+    row = 1
+    col = 10
+    test_set_x = np.random.uniform(0,1,(row,col))
+    predicted_values = predict_model(test_set_x)
+    print("Predicted values")
     print(predicted_values)
 
 if __name__ == '__main__':
     sgd_optimization_sum()
+    predict()
