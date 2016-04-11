@@ -13,11 +13,12 @@ import gzip
 import os
 import sys
 import timeit
+from HiddenLayer import *
 
 class BuildModel(object):
     def __init__(self,learning_rate=0.13, n_epochs=10000000,
                            dataset='sum.pkl.gz',
-                           batch_size=100):
+                           batch_size=10):
         """
         stochastic gradient descent optimization of a log-linear model
 
@@ -67,34 +68,41 @@ class BuildModel(object):
         # allocate symbolic variables for the data
         index = T.lscalar()  # index to a [mini]batch
 
-        # generate symbolic variables for input (x and y represent a
-        # minibatch)
+        # generate symbolic variables for input (x and y represent a minibatch)
         x = T.matrix('x')  # data
         y = T.ivector('y')  # probs, presented as 1D vector of [int] labels
 
-        # construct the logistic regression class
+        # Set up vars
+        rng = numpy.random.RandomState(23455)
         n_in = 10
         n_out = 10
         print( 'n_in ' + str(n_in) )
         print( 'n_out ' + str(n_out) + '\n' )
-        """
-        if not(n_in==train_set_x.get_value(borrow=True).shape[1]):
-            print( 'n_in is different from train_set_x column dimensions!!!\n' )
-            return
-        if not(n_in==valid_set_x.get_value(borrow=True).shape[1]):
-            print( 'n_in is different from valid_set_x column dimensions!!!' )
-            return 
-        if not(n_in==test_set_x.get_value(borrow=True).shape[1]):
-            print( 'n_in is different from test_set_x column dimensions!!!' )  
-            return
-        """
-        self.classifier = LogisticRegression(input=x, n_in=n_in, n_out=n_out)
+
+        # construct a fully-connected sigmoidal layer
+        layer0 = HiddenLayer(
+            rng,
+            input=x,
+            n_in=n_in,
+            n_out=n_out,
+            activation=T.tanh
+        )
+
+        # construct a fully-connected sigmoidal layer
+        layer1 = HiddenLayer(
+            rng,
+            input=layer0.output,
+            n_in=n_out,
+            n_out=n_in,
+            activation=T.tanh
+        )
+
+        # classify the values of the fully-connected sigmoidal layer        
+        self.classifier = LogisticRegression(input=layer1.output, n_in=n_in, n_out=n_out)
 
         # cost = negative log likelihood in symbolic format
-        cost = self.classifier.errors(y)
+        cost = self.classifier.negative_log_likelihood(y)
 
-        # compiling a Theano function that computes the mistakes that are made by
-        # the model on a minibatch
         # batch_size == row size == weight vector row size
         self.test_model = theano.function(
             inputs=[index],
@@ -114,24 +122,15 @@ class BuildModel(object):
             }
         )
 
-        # compute the gradient of cost with respect to theta = (W,b)
-        g_W0 = T.grad(cost=cost, wrt=self.classifier.W0)
-        g_b0 = T.grad(cost=cost, wrt=self.classifier.b0)
-        g_W1 = T.grad(cost=cost, wrt=self.classifier.W1)
-        g_b1 = T.grad(cost=cost, wrt=self.classifier.b1)
+        # create a update list by gradient descent
+        params = layer1.params + layer0.params + [self.classifier.W, self.classifier.b]
+        grads = T.grad(cost, params)
+        updates = [
+            (param_i, param_i - learning_rate * grad_i)
+            for param_i, grad_i in zip(params, grads)
+        ]
 
-        ############################################# insert MLP ####################
-
-        # specify how to update the parameters of the model as a list of
-        # (variable, update expression) pairs.
-        updates = [(self.classifier.W0, self.classifier.W0 - learning_rate * g_W0),
-                   (self.classifier.b0, self.classifier.b0 - learning_rate * g_b0),
-                   (self.classifier.W1, self.classifier.W1 - learning_rate * g_W1),
-                   (self.classifier.b1, self.classifier.b1 - learning_rate * g_b1)]
-
-        # compiling a Theano function `train_model` that returns the cost, but at
-        # the same time updates the parameter of the model based on the rules
-        # defined in `updates`
+        # train model
         self.train_model = theano.function(
             inputs=[index],
             outputs=cost,

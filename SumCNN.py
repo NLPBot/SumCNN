@@ -15,7 +15,7 @@ import timeit
 
 def sgd_optimization_sum(learning_rate=0.13, n_epochs=10000000,
                            dataset='sum.pkl.gz',
-                           batch_size=100):
+                           batch_size=10):
     """
     Demonstrate stochastic gradient descent optimization of a log-linear
     model
