@@ -17,7 +17,7 @@ def sgd_optimization_sum(learning_rate=0.13, n_epochs=10000000,
                            dataset='sum.pkl.gz',
                            batch_size=10):
     """
-    Demonstrate stochastic gradient descent optimization of a log-linear
+    Gradient descent optimization of a log-linear
     model
 
     :type learning_rate: float
@@ -65,6 +65,9 @@ def sgd_optimization_sum(learning_rate=0.13, n_epochs=10000000,
         epoch = epoch + 1
         for minibatch_index in range(models.n_train_batches):
             minibatch_avg_cost = models.train_model(minibatch_index)
+
+            #print('train error %f' % minibatch_avg_cost)
+
             # iteration number
             iter = (epoch - 1) * models.n_train_batches + minibatch_index
 
@@ -140,7 +143,7 @@ def predict():
     # compile a predictor function
     predict_model = theano.function(
         inputs=[classifier.input],
-        outputs=classifier.y_pred)
+        outputs=classifier.p_y_given_x)
 
     # We can test it on some examples from test test
     """
@@ -149,9 +152,7 @@ def predict():
     test_set_x, test_set_y = datasets[2]
     test_set_x = test_set_x.get_value()
     """
-    row = 1
-    col = 10
-    test_set_x = np.random.uniform(0,1,(row,col))
+    test_set_x = [[11,12,13,14,15,16,17,18,19,20]]
     predicted_values = predict_model(test_set_x)
     print("Predicted values")
     print(predicted_values)
