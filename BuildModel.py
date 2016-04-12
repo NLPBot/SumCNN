@@ -99,19 +99,21 @@ class BuildModel(object):
         ######################################################################
 
         # construct a fully-connected sigmoidal layer
+        n_in_1 = n_out
+        n_out_2 = n_out
         layer1 = HiddenLayer(
             rng,
             input=layer0.output,
-            n_in=n_out,
+            n_in=n_out_2,
             n_out=n_in,
             activation=T.tanh
         )
 
         # classify the values of the fully-connected sigmoidal layer        
-        self.classifier = LogisticRegression(input=layer1.output, n_in=n_in, n_out=n_out)
+        self.classifier = LogisticRegression(input=layer1.output, n_in=n_in, n_out=2)
 
         # cost = negative log likelihood in symbolic format
-        cost = self.classifier.cost(y)
+        cost = self.classifier.negative_log_likelihood(y)
 
         # batch_size == row size == weight vector row size
         self.test_model = theano.function(
@@ -182,8 +184,8 @@ class BuildModel(object):
 
         row = batch_size
         col = 10
-        left = [[1,2,3,4,5,6,7,8,9,10]]*10
-        right = [1,2,3,4,5,6,7,8,9,10]
+        left = [[1]*10,[0]*10,[0]*10,[0]*10,[0]*10,[0]*10,[0]*10,[0]*10,[0]*10,[0]*10]
+        right = [1,0,0,0,0,0,0,0,0,0,0]
         train_set = ( left, right )
         valid_set = ( left, right )
         test_set = ( left, right )

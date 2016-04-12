@@ -143,7 +143,7 @@ def predict():
     # compile a predictor function
     predict_model = theano.function(
         inputs=[classifier.input],
-        outputs=classifier.p_y_given_x)
+        outputs=classifier.y_pred)
 
     # We can test it on some examples from test test
     """
@@ -152,7 +152,7 @@ def predict():
     test_set_x, test_set_y = datasets[2]
     test_set_x = test_set_x.get_value()
     """
-    test_set_x = [[11,12,13,14,15,16,17,18,19,20]]
+    test_set_x = [[1]*10]
     predicted_values = predict_model(test_set_x)
     print("Predicted values")
     print(predicted_values)
