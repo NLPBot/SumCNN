@@ -14,11 +14,13 @@ import os
 import sys
 import timeit
 from HiddenLayer import *
+from LeNetConvPoolLayer import *
+from theano.tensor.nnet import conv2d
 
 class BuildModel(object):
     def __init__(self,learning_rate=0.13, n_epochs=10000000,
                            dataset='sum.pkl.gz',
-                           batch_size=10):
+                           batch_size=2):
         """
         stochastic gradient descent optimization of a log-linear model
 
@@ -72,45 +74,69 @@ class BuildModel(object):
         x = T.matrix('x')  # data
         y = T.ivector('y')  # probs, presented as 1D vector of [int] labels
 
+        feature_num = 10
+########################################################################################
+        """
+        rng = numpy.random.RandomState(23455)
+
+        feature_num = 10
+        dim_1 = 10
+        dim_2 = feature_num    
+        nkerns=20
+
+        # Reshape matrix of rasterized images of shape (batch_size, 1 * 10)
+        # to a 4D tensor, compatible with our LeNetConvPoolLayer
+        # (10,) is the size of feature vectors.
+        conv_layer_input = x.reshape((10, 1, dim_1, dim_2))
+
+        # Construct the first convolutional pooling layer:
+        # filtering reduces the image size to (10-3+1 , 10-3+1) = (8, 8)
+        # maxpooling reduces this further to (8/2, 8/2) = (4, 4)
+        # 4D output tensor is thus of shape (batch_size, nkerns[0], 4, 4)
+        conv_layer = LeNetConvPoolLayer(
+            rng,
+            input=conv_layer_input,
+            image_shape=(batch_size, 1, dim_1, dim_2),
+            filter_shape=(nkerns, 1, 2, 2),
+            poolsize=(2, 2)
+        )
+
+        # the HiddenLayer being fully-connected, it operates on 2D matrices of
+        # shape (batch_size, num_pixels) (i.e matrix of rasterized images).
+        # This will generate a matrix of shape (batch_size, nkerns[1]*4*4),
+        # or (10, 50 * 4 * 4) = (10, 800) with the default values.
+        conv_layer_output = conv_layer.output.flatten(2)
+        """
+########################################################################################
+
         # Set up vars
         rng = numpy.random.RandomState(23455)
-        n_in = batch_size
-        n_out = 10
-        print( 'n_in ' + str(n_in) )
-        print( 'n_out ' + str(n_out) + '\n' )
+        n_in_0 = feature_num
+        n_out_0 = 5000
 
         # construct a fully-connected sigmoidal layer
         layer0 = HiddenLayer(
             rng,
             input=x,
-            n_in=n_in,
-            n_out=n_out,
+            n_in=n_in_0,
+            n_out=n_out_0,
             activation=T.tanh
         )
 
-        ###################### Cast to higher dimensions#####################
-
-
-
-        # To be added
-
-
-
-        ######################################################################
-
         # construct a fully-connected sigmoidal layer
-        n_in_1 = n_out
-        n_out_2 = n_out
+        n_in_1 = n_out_0
+        n_out_1 = 1000
         layer1 = HiddenLayer(
             rng,
             input=layer0.output,
-            n_in=n_out_2,
-            n_out=n_in,
+            n_in=n_in_1,
+            n_out=n_out_1,
             activation=T.tanh
         )
 
-        # classify the values of the fully-connected sigmoidal layer        
-        self.classifier = LogisticRegression(input=layer1.output, n_in=n_in, n_out=2)
+        # classify the values of the fully-connected sigmoidal layer
+        num_of_class = 3 # (sim > 0.75 => 2), (sim < 0.25 => 0), ( 0.25<sim<0.75 )        
+        self.classifier = LogisticRegression(input=layer1.output, n_in=n_out_1, n_out=num_of_class)
 
         # cost = negative log likelihood in symbolic format
         cost = self.classifier.negative_log_likelihood(y)
@@ -135,7 +161,7 @@ class BuildModel(object):
         )
 
         # create a update list by gradient descent
-        params = layer1.params + layer0.params + [self.classifier.W, self.classifier.b]
+        params = layer1.params + layer0.params + [self.classifier.W, self.classifier.b] # + conv_layer.params 
         grads = T.grad(cost, params)
         updates = [
             (param_i, param_i - learning_rate * grad_i)
@@ -182,10 +208,10 @@ class BuildModel(object):
             except:
                 train_set, valid_set, test_set = pickle.load(f)
 
-        row = batch_size
-        col = 10
-        left = [[1]*10,[0]*10,[0]*10,[0]*10,[0]*10,[0]*10,[0]*10,[0]*10,[0]*10,[0]*10]
-        right = [1,0,0,0,0,0,0,0,0,0,0]
+        sent_num = 10
+        feat_num = 10
+        left = [[1]*feat_num,[2000]*feat_num,[300]*feat_num,[400]*feat_num,[500]*feat_num,[600]*feat_num,[700]*feat_num,[800]*feat_num,[900]*feat_num,[1000]*feat_num]
+        right = [0,2,1,1,1,1,1,1,1,1]
         train_set = ( left, right )
         valid_set = ( left, right )
         test_set = ( left, right )

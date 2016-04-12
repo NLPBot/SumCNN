@@ -35,7 +35,7 @@ class LogisticRegression(object):
         """
         # initialize with 0 the weights W as a matrix of shape (n_in, n_out)
         self.W = theano.shared(
-            value=numpy.ones(
+            value=numpy.zeros(
                 (n_in, n_out),
                 dtype=theano.config.floatX
             ),
@@ -44,7 +44,7 @@ class LogisticRegression(object):
         )
         # initialize the biases b as a vector of n_out 0s
         self.b = theano.shared(
-            value=numpy.ones(
+            value=numpy.zeros(
                 (n_out,),
                 dtype=theano.config.floatX
             ),

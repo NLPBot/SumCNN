@@ -15,7 +15,7 @@ import timeit
 
 def sgd_optimization_sum(learning_rate=0.13, n_epochs=10000000,
                            dataset='sum.pkl.gz',
-                           batch_size=10):
+                           batch_size=2):
     """
     Gradient descent optimization of a log-linear
     model
@@ -44,9 +44,8 @@ def sgd_optimization_sum(learning_rate=0.13, n_epochs=10000000,
     ###############
     print('... training the model')
     # early-stopping parameters
-    patience = 5000  # look as this many examples regardless
-    patience_increase = 2  # wait this much longer when a new best is
-                                  # found
+    patience = 10000  # look as this many examples regardless
+    patience_increase = 2  # wait this much longer when a new best is found
     improvement_threshold = 0.995  # a relative improvement of this much is
                                   # considered significant
     validation_frequency = min(models.n_train_batches, patience // 2)
@@ -152,7 +151,7 @@ def predict():
     test_set_x, test_set_y = datasets[2]
     test_set_x = test_set_x.get_value()
     """
-    test_set_x = [[1]*10]
+    test_set_x = [[600]*10]*2
     predicted_values = predict_model(test_set_x)
     print("Predicted values")
     print(predicted_values)
