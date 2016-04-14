@@ -12,9 +12,10 @@ import gzip
 import os
 import sys
 import timeit
+import pickle
 
 def sgd_optimization_sum(learning_rate=0.13, n_epochs=10000000,
-                           dataset='sum.pkl.gz',
+                           dataset='sum.pkl',
                            batch_size=2):
     """
     Gradient descent optimization of a log-linear
@@ -31,12 +32,15 @@ def sgd_optimization_sum(learning_rate=0.13, n_epochs=10000000,
     :param dataset: the path of the summary dataset file from
     """
 
+    dataset = pickle.load( open( dataset, "rb" ) )
+    print(dataset)
+
     ###############
     # MODEL SETUP #
     ###############
     models = BuildModel( 	learning_rate=0.13, 
     						n_epochs=1000,
-                			dataset='sum.pkl.gz',
+                			dataset='sum.pkl',
                 			batch_size=batch_size )
 
     ###############

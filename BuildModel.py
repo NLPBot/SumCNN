@@ -16,6 +16,7 @@ import timeit
 from HiddenLayer import *
 from LeNetConvPoolLayer import *
 from theano.tensor.nnet import conv2d
+import pickle
 
 class BuildModel(object):
     def __init__(self,learning_rate=0.13, n_epochs=10000000,
@@ -74,7 +75,7 @@ class BuildModel(object):
         x = T.matrix('x')  # data
         y = T.ivector('y')  # probs, presented as 1D vector of [int] labels
 
-        feature_num = 10
+        feature_num = 13
 ########################################################################################
         """
         rng = numpy.random.RandomState(23455)
@@ -179,6 +180,13 @@ class BuildModel(object):
             }
         )
 
+    def load_word2vec(self):
+        print "loading data...",
+        x = cPickle.load(open("mr.p","rb"))
+        self.revs, W, W2, word_idx_map, vocab = x[0], x[1], x[2], x[3], x[4]
+        print "data loaded!"
+        
+
     def load_data(self,dataset,batch_size):
         ''' Loads the dataset
         :type dataset: string
@@ -189,32 +197,10 @@ class BuildModel(object):
         # LOAD DATA #
         #############
 
-        # Obtain dataset
-        data_dir, data_file = os.path.split(dataset)
-        if data_dir == "" and not os.path.isfile(dataset):
-            # Check if dataset is in the data directory.
-            new_path = os.path.join(
-                os.path.split(__file__)[0],
-                "data",
-                dataset
-            )
-            if os.path.isfile(new_path) or data_file == 'sum.pkl.gz':
-                dataset = new_path
-
-        # Load the dataset
-        with gzip.open(dataset, 'rb') as f:
-            try:
-                train_set, valid_set, test_set = pickle.load(f, encoding='latin1')
-            except:
-                train_set, valid_set, test_set = pickle.load(f)
-
-        sent_num = 10
-        feat_num = 10
-        left = [[1]*feat_num,[2000]*feat_num,[300]*feat_num,[400]*feat_num,[500]*feat_num,[600]*feat_num,[700]*feat_num,[800]*feat_num,[900]*feat_num,[1000]*feat_num]
-        right = [0,2,1,1,1,1,1,1,1,1]
-        train_set = ( left, right )
-        valid_set = ( left, right )
-        test_set = ( left, right )
+        data = pickle.load( open( dataset, "rb" ) )
+        train_set = data
+        valid_set = data
+        test_set = data
 
         def shared_dataset(data_xy, borrow=True):
             """ Function that loads the dataset into shared variables
