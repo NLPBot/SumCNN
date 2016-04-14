@@ -77,48 +77,51 @@ class BuildModel(object):
 
         feature_num = 13
 ########################################################################################
-        """
+        
         rng = numpy.random.RandomState(23455)
 
-        feature_num = 10
-        dim_1 = 10
-        dim_2 = feature_num    
+        feature_num = 13
         nkerns=20
 
-        # Reshape matrix of rasterized images of shape (batch_size, 1 * 10)
+        # Reshape matrix of rasterized images of shape (batch_size, 1 * 13)
         # to a 4D tensor, compatible with our LeNetConvPoolLayer
-        # (10,) is the size of feature vectors.
-        conv_layer_input = x.reshape((10, 1, dim_1, dim_2))
+        # (13,) is the size of feature vectors.
+        conv_layer_input = x.reshape((batch_size, 1, feature_num, 1))
 
         # Construct the first convolutional pooling layer:
-        # filtering reduces the image size to (10-3+1 , 10-3+1) = (8, 8)
-        # maxpooling reduces this further to (8/2, 8/2) = (4, 4)
-        # 4D output tensor is thus of shape (batch_size, nkerns[0], 4, 4)
+        # filtering reduces the image size to (13-2+1 , 1) = (12, 1)
+        # maxpooling reduces this further to (13/2, 1) = (6, 1)
+        # 4D output tensor is thus of shape (batch_size, nkerns, 6, 1)
         conv_layer = LeNetConvPoolLayer(
             rng,
             input=conv_layer_input,
-            image_shape=(batch_size, 1, dim_1, dim_2),
-            filter_shape=(nkerns, 1, 2, 2),
-            poolsize=(2, 2)
+            image_shape=(batch_size, 1, feature_num, 1),
+            filter_shape=(nkerns, 1, 2, 1),
+            poolsize=(2, 1)
         )
 
         # the HiddenLayer being fully-connected, it operates on 2D matrices of
         # shape (batch_size, num_pixels) (i.e matrix of rasterized images).
-        # This will generate a matrix of shape (batch_size, nkerns[1]*4*4),
-        # or (10, 50 * 4 * 4) = (10, 800) with the default values.
+        # This will generate a matrix of shape (batch_size, nkerns*6*1),
+        # or (2, 20 * 6 * 1) = (2, 120) with the default values.
         conv_layer_output = conv_layer.output.flatten(2)
-        """
+        
 ########################################################################################
+
+
+        ## Concatenate x with word2vec ##
+        #input_x = T.concatenate( [x,word_vec], axis=0 )
 
         # Set up vars
         rng = numpy.random.RandomState(23455)
-        n_in_0 = feature_num
+        #n_in_0 = feature_num
+        n_in_0 = 120
         n_out_0 = 5000
 
         # construct a fully-connected sigmoidal layer
         layer0 = HiddenLayer(
             rng,
-            input=x,
+            input=conv_layer_output,
             n_in=n_in_0,
             n_out=n_out_0,
             activation=T.tanh
@@ -126,7 +129,7 @@ class BuildModel(object):
 
         # construct a fully-connected sigmoidal layer
         n_in_1 = n_out_0
-        n_out_1 = 1000
+        n_out_1 = feature_num
         layer1 = HiddenLayer(
             rng,
             input=layer0.output,
@@ -136,7 +139,7 @@ class BuildModel(object):
         )
 
         # classify the values of the fully-connected sigmoidal layer
-        num_of_class = 3 # (sim > 0.75 => 2), (sim < 0.25 => 0), ( 0.25<sim<0.75 )        
+        num_of_class = 3 # (sim > 0.75 => 2), (sim < 0.25 => 0), (0.25<sim<0.75 => 1)        
         self.classifier = LogisticRegression(input=layer1.output, n_in=n_out_1, n_out=num_of_class)
 
         # cost = negative log likelihood in symbolic format
@@ -162,7 +165,7 @@ class BuildModel(object):
         )
 
         # create a update list by gradient descent
-        params = layer1.params + layer0.params + [self.classifier.W, self.classifier.b] # + conv_layer.params 
+        params = layer1.params + layer0.params + [self.classifier.W, self.classifier.b] #+ conv_layer.params 
         grads = T.grad(cost, params)
         updates = [
             (param_i, param_i - learning_rate * grad_i)

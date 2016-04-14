@@ -33,7 +33,6 @@ def sgd_optimization_sum(learning_rate=0.13, n_epochs=10000000,
     """
 
     dataset = pickle.load( open( dataset, "rb" ) )
-    print(dataset)
 
     ###############
     # MODEL SETUP #
@@ -148,14 +147,7 @@ def predict():
         inputs=[classifier.input],
         outputs=classifier.y_pred)
 
-    # We can test it on some examples from test test
-    """
-    dataset='sum.pkl.gz'
-    datasets = load_data(dataset)
-    test_set_x, test_set_y = datasets[2]
-    test_set_x = test_set_x.get_value()
-    """
-    test_set_x = [[600]*10]*2
+    test_set_x = [[0, 0, 2, 4, 3, 9, 0, 2, 2, 2, 3, 1, 2]]
     predicted_values = predict_model(test_set_x)
     print("Predicted values")
     print(predicted_values)

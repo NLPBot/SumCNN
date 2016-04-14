@@ -3,11 +3,11 @@ from pprint import pprint
 import os
 import pickle
 
-def get_features():
+def get_data_pair():
 
     feat_vec_list = []
     scores = []
-    score = 0.5
+    score = 0
 
     data_dir = os.path.join('data','features')
     for file_name in os.listdir(data_dir):
@@ -40,6 +40,12 @@ def get_features():
             feat_vec.append(x['position']['sentence']['paragraph']['reverse'])
             # append x_set, y_set
             feat_vec_list.append( feat_vec )
+            if x['length']<20:
+                score = 0
+            if x['length']<30 and x['length']>20:
+                score = 1
+            if x['length']>30:
+                score = 2            
             scores.append(score)
 
     return ( feat_vec_list, scores )
@@ -47,5 +53,5 @@ def get_features():
 if __name__=="__main__":
     # pre-set
     feat_num = 13
-    pickle.dump( get_features(), open('sum.pkl','wb') )
+    pickle.dump( get_data_pair(), open('sum.pkl','wb') )
     
