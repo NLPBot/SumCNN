@@ -76,17 +76,24 @@ class BuildModel(object):
         y = T.ivector('y')  # probs, presented as 1D vector of [int] labels
 
         feature_num = 13
-########################################################################################
-        
-        rng = numpy.random.RandomState(23455)
 
-        feature_num = 13
+####################### start of CNN ############################
+        
+        # Initialize parameters
+        rng = numpy.random.RandomState(23455)
         nkerns=20
+        v_height = feature_num # to be change 
+        image_height = v_height
+        image_width = 1
+        filter_height = 2 if v_height%2==1 else 3
+        filter_width = 1
+        pool_height = 2
+        pool_width = 1
 
         # Reshape matrix of rasterized images of shape (batch_size, 1 * 13)
         # to a 4D tensor, compatible with our LeNetConvPoolLayer
         # (13,) is the size of feature vectors.
-        conv_layer_input = x.reshape((batch_size, 1, feature_num, 1))
+        conv_layer_input = x.reshape((batch_size, 1, image_height, image_width))
 
         # Construct the first convolutional pooling layer:
         # filtering reduces the image size to (13-2+1 , 1) = (12, 1)
@@ -95,9 +102,9 @@ class BuildModel(object):
         conv_layer = LeNetConvPoolLayer(
             rng,
             input=conv_layer_input,
-            image_shape=(batch_size, 1, feature_num, 1),
-            filter_shape=(nkerns, 1, 2, 1),
-            poolsize=(2, 1)
+            image_shape=(batch_size, 1, image_height, image_width),
+            filter_shape=(nkerns, 1, filter_height, filter_width),
+            poolsize=(pool_height, pool_width)
         )
 
         # the HiddenLayer being fully-connected, it operates on 2D matrices of
@@ -106,22 +113,23 @@ class BuildModel(object):
         # or (2, 20 * 6 * 1) = (2, 120) with the default values.
         conv_layer_output = conv_layer.output.flatten(2)
         
-########################################################################################
-
+####################### End of CNN ##############################
 
         ## Concatenate x with word2vec ##
         #input_x = T.concatenate( [x,word_vec], axis=0 )
 
+        input_x = conv_layer_output
+
         # Set up vars
         rng = numpy.random.RandomState(23455)
         #n_in_0 = feature_num
-        n_in_0 = 120
+        n_in_0 = nkerns*(v_height-filter_height+1)/pool_height
         n_out_0 = 5000
 
         # construct a fully-connected sigmoidal layer
         layer0 = HiddenLayer(
             rng,
-            input=conv_layer_output,
+            input=input_x,
             n_in=n_in_0,
             n_out=n_out_0,
             activation=T.tanh
