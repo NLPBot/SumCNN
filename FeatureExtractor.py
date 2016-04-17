@@ -2,6 +2,11 @@ import json
 from pprint import pprint
 import os
 import pickle
+from SentSim import *
+
+def get_sim(sent,summary):
+    ratio = float(len(summary.split()))/float(len(sent.split()))
+    return (binary_similarity(sent,summary)+frequency_similarity(sent,summary))/2
 
 def get_data_pair():
 
