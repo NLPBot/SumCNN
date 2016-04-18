@@ -1,0 +1,2065 @@
+{
+  "data": {
+    "documents": {
+      "document": [
+        {
+          "conj": {
+            "+": 3,
+            "-": 0
+          },
+          "count": {
+            "punct": 9,
+            "stop0": 61,
+            "stop1": 39
+          },
+          "id": "1",
+          "length": 6,
+          "ner": {
+            "DATE": 8,
+            "LOCATION": 7,
+            "MISC": 1,
+            "NUMBER": 2,
+            "PERSON": 3
+          },
+          "overlap": 0,
+          "pos": {
+            "punct": {
+              ",": 3,
+              ".": 6
+            },
+            "word": {
+              "CC": 3,
+              "CD": 2,
+              "DT": 10,
+              "IN": 10,
+              "JJ": 6,
+              "JJS": 1,
+              "MD": 1,
+              "NN": 14,
+              "NNP": 19,
+              "NNS": 4,
+              "RB": 6,
+              "TO": 4,
+              "VB": 3,
+              "VBD": 8,
+              "VBG": 2,
+              "VBN": 5,
+              "VBZ": 2
+            }
+          },
+          "pronoun": {
+            "personal": {},
+            "reflexive": {},
+            "wh": {}
+          },
+          "ratio": {
+            "punct": {
+              "word": [
+                9,
+                100
+              ]
+            },
+            "stop0": {
+              "stop1": [
+                61,
+                39
+              ]
+            }
+          },
+          "sentence": {
+            "first": 6,
+            "last": 6,
+            "len": 6
+          },
+          "term": {
+            ",": 3,
+            ".": 6,
+            "4": 1,
+            "An": 1,
+            "Florida": 1,
+            "Galveston": 1,
+            "Hurricane": 1,
+            "Katrina": 1,
+            "Key": 1,
+            "Monday": 1,
+            "New": 1,
+            "Once": 1,
+            "Orleans": 1,
+            "Rita": 5,
+            "Storm": 1,
+            "Texas": 3,
+            "The": 1,
+            "Tropical": 1,
+            "Tuesday": 1,
+            "Wednesday": 1,
+            "West": 1,
+            "a": 4,
+            "again": 2,
+            "and": 3,
+            "approached": 1,
+            "as": 2,
+            "be": 1,
+            "bears": 1,
+            "being": 1,
+            "brushed": 1,
+            "category": 1,
+            "coastal": 1,
+            "county": 1,
+            "emergency": 1,
+            "evacuated": 1,
+            "evacuation": 2,
+            "for": 1,
+            "forecast": 1,
+            "from": 1,
+            "greatest": 1,
+            "hurricane": 2,
+            "implemented": 1,
+            "in": 3,
+            "individuals": 1,
+            "is": 1,
+            "issued": 1,
+            "keys": 1,
+            "later": 1,
+            "level": 1,
+            "likely": 1,
+            "major": 1,
+            "mandatory": 1,
+            "now": 1,
+            "of": 2,
+            "on": 1,
+            "one": 1,
+            "order": 2,
+            "past": 1,
+            "possibly": 1,
+            "preparation": 1,
+            "refuge": 1,
+            "services": 1,
+            "some": 1,
+            "strengthen": 1,
+            "survivors": 1,
+            "taking": 1,
+            "the": 3,
+            "threat": 1,
+            "threatened": 1,
+            "to": 4,
+            "upgraded": 1,
+            "uprooted": 1,
+            "was": 2,
+            "week": 1,
+            "were": 2,
+            "will": 1
+          },
+          "timex": {}
+        }
+      ]
+    },
+    "terms": {
+      "term": {
+        ",": {
+          "df": 1,
+          "id": ",",
+          "idf": 0.0,
+          "tf": {
+            "length": 1,
+            "max": 3,
+            "mean": 3.0,
+            "min": 3,
+            "sum": 3,
+            "vector": [
+              3
+            ]
+          },
+          "tfidf": {
+            "length": 1,
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "sum": 0.0,
+            "vector": [
+              0.0
+            ]
+          }
+        },
+        ".": {
+          "df": 1,
+          "id": ".",
+          "idf": 0.0,
+          "tf": {
+            "length": 1,
+            "max": 6,
+            "mean": 6.0,
+            "min": 6,
+            "sum": 6,
+            "vector": [
+              6
+            ]
+          },
+          "tfidf": {
+            "length": 1,
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "sum": 0.0,
+            "vector": [
+              0.0
+            ]
+          }
+        },
+        "4": {
+          "df": 1,
+          "id": "4",
+          "idf": 0.0,
+          "tf": {
+            "length": 1,
+            "max": 1,
+            "mean": 1.0,
+            "min": 1,
+            "sum": 1,
+            "vector": [
+              1
+            ]
+          },
+          "tfidf": {
+            "length": 1,
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "sum": 0.0,
+            "vector": [
+              0.0
+            ]
+          }
+        },
+        "An": {
+          "df": 1,
+          "id": "An",
+          "idf": 0.0,
+          "tf": {
+            "length": 1,
+            "max": 1,
+            "mean": 1.0,
+            "min": 1,
+            "sum": 1,
+            "vector": [
+              1
+            ]
+          },
+          "tfidf": {
+            "length": 1,
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "sum": 0.0,
+            "vector": [
+              0.0
+            ]
+          }
+        },
+        "Florida": {
+          "df": 1,
+          "id": "Florida",
+          "idf": 0.0,
+          "tf": {
+            "length": 1,
+            "max": 1,
+            "mean": 1.0,
+            "min": 1,
+            "sum": 1,
+            "vector": [
+              1
+            ]
+          },
+          "tfidf": {
+            "length": 1,
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "sum": 0.0,
+            "vector": [
+              0.0
+            ]
+          }
+        },
+        "Galveston": {
+          "df": 1,
+          "id": "Galveston",
+          "idf": 0.0,
+          "tf": {
+            "length": 1,
+            "max": 1,
+            "mean": 1.0,
+            "min": 1,
+            "sum": 1,
+            "vector": [
+              1
+            ]
+          },
+          "tfidf": {
+            "length": 1,
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "sum": 0.0,
+            "vector": [
+              0.0
+            ]
+          }
+        },
+        "Hurricane": {
+          "df": 1,
+          "id": "Hurricane",
+          "idf": 0.0,
+          "tf": {
+            "length": 1,
+            "max": 1,
+            "mean": 1.0,
+            "min": 1,
+            "sum": 1,
+            "vector": [
+              1
+            ]
+          },
+          "tfidf": {
+            "length": 1,
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "sum": 0.0,
+            "vector": [
+              0.0
+            ]
+          }
+        },
+        "Katrina": {
+          "df": 1,
+          "id": "Katrina",
+          "idf": 0.0,
+          "tf": {
+            "length": 1,
+            "max": 1,
+            "mean": 1.0,
+            "min": 1,
+            "sum": 1,
+            "vector": [
+              1
+            ]
+          },
+          "tfidf": {
+            "length": 1,
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "sum": 0.0,
+            "vector": [
+              0.0
+            ]
+          }
+        },
+        "Key": {
+          "df": 1,
+          "id": "Key",
+          "idf": 0.0,
+          "tf": {
+            "length": 1,
+            "max": 1,
+            "mean": 1.0,
+            "min": 1,
+            "sum": 1,
+            "vector": [
+              1
+            ]
+          },
+          "tfidf": {
+            "length": 1,
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "sum": 0.0,
+            "vector": [
+              0.0
+            ]
+          }
+        },
+        "Monday": {
+          "df": 1,
+          "id": "Monday",
+          "idf": 0.0,
+          "tf": {
+            "length": 1,
+            "max": 1,
+            "mean": 1.0,
+            "min": 1,
+            "sum": 1,
+            "vector": [
+              1
+            ]
+          },
+          "tfidf": {
+            "length": 1,
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "sum": 0.0,
+            "vector": [
+              0.0
+            ]
+          }
+        },
+        "New": {
+          "df": 1,
+          "id": "New",
+          "idf": 0.0,
+          "tf": {
+            "length": 1,
+            "max": 1,
+            "mean": 1.0,
+            "min": 1,
+            "sum": 1,
+            "vector": [
+              1
+            ]
+          },
+          "tfidf": {
+            "length": 1,
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "sum": 0.0,
+            "vector": [
+              0.0
+            ]
+          }
+        },
+        "Once": {
+          "df": 1,
+          "id": "Once",
+          "idf": 0.0,
+          "tf": {
+            "length": 1,
+            "max": 1,
+            "mean": 1.0,
+            "min": 1,
+            "sum": 1,
+            "vector": [
+              1
+            ]
+          },
+          "tfidf": {
+            "length": 1,
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "sum": 0.0,
+            "vector": [
+              0.0
+            ]
+          }
+        },
+        "Orleans": {
+          "df": 1,
+          "id": "Orleans",
+          "idf": 0.0,
+          "tf": {
+            "length": 1,
+            "max": 1,
+            "mean": 1.0,
+            "min": 1,
+            "sum": 1,
+            "vector": [
+              1
+            ]
+          },
+          "tfidf": {
+            "length": 1,
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "sum": 0.0,
+            "vector": [
+              0.0
+            ]
+          }
+        },
+        "Rita": {
+          "df": 1,
+          "id": "Rita",
+          "idf": 0.0,
+          "tf": {
+            "length": 1,
+            "max": 5,
+            "mean": 5.0,
+            "min": 5,
+            "sum": 5,
+            "vector": [
+              5
+            ]
+          },
+          "tfidf": {
+            "length": 1,
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "sum": 0.0,
+            "vector": [
+              0.0
+            ]
+          }
+        },
+        "Storm": {
+          "df": 1,
+          "id": "Storm",
+          "idf": 0.0,
+          "tf": {
+            "length": 1,
+            "max": 1,
+            "mean": 1.0,
+            "min": 1,
+            "sum": 1,
+            "vector": [
+              1
+            ]
+          },
+          "tfidf": {
+            "length": 1,
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "sum": 0.0,
+            "vector": [
+              0.0
+            ]
+          }
+        },
+        "Texas": {
+          "df": 1,
+          "id": "Texas",
+          "idf": 0.0,
+          "tf": {
+            "length": 1,
+            "max": 3,
+            "mean": 3.0,
+            "min": 3,
+            "sum": 3,
+            "vector": [
+              3
+            ]
+          },
+          "tfidf": {
+            "length": 1,
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "sum": 0.0,
+            "vector": [
+              0.0
+            ]
+          }
+        },
+        "The": {
+          "df": 1,
+          "id": "The",
+          "idf": 0.0,
+          "tf": {
+            "length": 1,
+            "max": 1,
+            "mean": 1.0,
+            "min": 1,
+            "sum": 1,
+            "vector": [
+              1
+            ]
+          },
+          "tfidf": {
+            "length": 1,
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "sum": 0.0,
+            "vector": [
+              0.0
+            ]
+          }
+        },
+        "Tropical": {
+          "df": 1,
+          "id": "Tropical",
+          "idf": 0.0,
+          "tf": {
+            "length": 1,
+            "max": 1,
+            "mean": 1.0,
+            "min": 1,
+            "sum": 1,
+            "vector": [
+              1
+            ]
+          },
+          "tfidf": {
+            "length": 1,
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "sum": 0.0,
+            "vector": [
+              0.0
+            ]
+          }
+        },
+        "Tuesday": {
+          "df": 1,
+          "id": "Tuesday",
+          "idf": 0.0,
+          "tf": {
+            "length": 1,
+            "max": 1,
+            "mean": 1.0,
+            "min": 1,
+            "sum": 1,
+            "vector": [
+              1
+            ]
+          },
+          "tfidf": {
+            "length": 1,
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "sum": 0.0,
+            "vector": [
+              0.0
+            ]
+          }
+        },
+        "Wednesday": {
+          "df": 1,
+          "id": "Wednesday",
+          "idf": 0.0,
+          "tf": {
+            "length": 1,
+            "max": 1,
+            "mean": 1.0,
+            "min": 1,
+            "sum": 1,
+            "vector": [
+              1
+            ]
+          },
+          "tfidf": {
+            "length": 1,
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "sum": 0.0,
+            "vector": [
+              0.0
+            ]
+          }
+        },
+        "West": {
+          "df": 1,
+          "id": "West",
+          "idf": 0.0,
+          "tf": {
+            "length": 1,
+            "max": 1,
+            "mean": 1.0,
+            "min": 1,
+            "sum": 1,
+            "vector": [
+              1
+            ]
+          },
+          "tfidf": {
+            "length": 1,
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "sum": 0.0,
+            "vector": [
+              0.0
+            ]
+          }
+        },
+        "a": {
+          "df": 1,
+          "id": "a",
+          "idf": 0.0,
+          "tf": {
+            "length": 1,
+            "max": 4,
+            "mean": 4.0,
+            "min": 4,
+            "sum": 4,
+            "vector": [
+              4
+            ]
+          },
+          "tfidf": {
+            "length": 1,
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "sum": 0.0,
+            "vector": [
+              0.0
+            ]
+          }
+        },
+        "again": {
+          "df": 1,
+          "id": "again",
+          "idf": 0.0,
+          "tf": {
+            "length": 1,
+            "max": 2,
+            "mean": 2.0,
+            "min": 2,
+            "sum": 2,
+            "vector": [
+              2
+            ]
+          },
+          "tfidf": {
+            "length": 1,
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "sum": 0.0,
+            "vector": [
+              0.0
+            ]
+          }
+        },
+        "and": {
+          "df": 1,
+          "id": "and",
+          "idf": 0.0,
+          "tf": {
+            "length": 1,
+            "max": 3,
+            "mean": 3.0,
+            "min": 3,
+            "sum": 3,
+            "vector": [
+              3
+            ]
+          },
+          "tfidf": {
+            "length": 1,
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "sum": 0.0,
+            "vector": [
+              0.0
+            ]
+          }
+        },
+        "approached": {
+          "df": 1,
+          "id": "approached",
+          "idf": 0.0,
+          "tf": {
+            "length": 1,
+            "max": 1,
+            "mean": 1.0,
+            "min": 1,
+            "sum": 1,
+            "vector": [
+              1
+            ]
+          },
+          "tfidf": {
+            "length": 1,
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "sum": 0.0,
+            "vector": [
+              0.0
+            ]
+          }
+        },
+        "as": {
+          "df": 1,
+          "id": "as",
+          "idf": 0.0,
+          "tf": {
+            "length": 1,
+            "max": 2,
+            "mean": 2.0,
+            "min": 2,
+            "sum": 2,
+            "vector": [
+              2
+            ]
+          },
+          "tfidf": {
+            "length": 1,
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "sum": 0.0,
+            "vector": [
+              0.0
+            ]
+          }
+        },
+        "be": {
+          "df": 1,
+          "id": "be",
+          "idf": 0.0,
+          "tf": {
+            "length": 1,
+            "max": 1,
+            "mean": 1.0,
+            "min": 1,
+            "sum": 1,
+            "vector": [
+              1
+            ]
+          },
+          "tfidf": {
+            "length": 1,
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "sum": 0.0,
+            "vector": [
+              0.0
+            ]
+          }
+        },
+        "bears": {
+          "df": 1,
+          "id": "bears",
+          "idf": 0.0,
+          "tf": {
+            "length": 1,
+            "max": 1,
+            "mean": 1.0,
+            "min": 1,
+            "sum": 1,
+            "vector": [
+              1
+            ]
+          },
+          "tfidf": {
+            "length": 1,
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "sum": 0.0,
+            "vector": [
+              0.0
+            ]
+          }
+        },
+        "being": {
+          "df": 1,
+          "id": "being",
+          "idf": 0.0,
+          "tf": {
+            "length": 1,
+            "max": 1,
+            "mean": 1.0,
+            "min": 1,
+            "sum": 1,
+            "vector": [
+              1
+            ]
+          },
+          "tfidf": {
+            "length": 1,
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "sum": 0.0,
+            "vector": [
+              0.0
+            ]
+          }
+        },
+        "brushed": {
+          "df": 1,
+          "id": "brushed",
+          "idf": 0.0,
+          "tf": {
+            "length": 1,
+            "max": 1,
+            "mean": 1.0,
+            "min": 1,
+            "sum": 1,
+            "vector": [
+              1
+            ]
+          },
+          "tfidf": {
+            "length": 1,
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "sum": 0.0,
+            "vector": [
+              0.0
+            ]
+          }
+        },
+        "category": {
+          "df": 1,
+          "id": "category",
+          "idf": 0.0,
+          "tf": {
+            "length": 1,
+            "max": 1,
+            "mean": 1.0,
+            "min": 1,
+            "sum": 1,
+            "vector": [
+              1
+            ]
+          },
+          "tfidf": {
+            "length": 1,
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "sum": 0.0,
+            "vector": [
+              0.0
+            ]
+          }
+        },
+        "coastal": {
+          "df": 1,
+          "id": "coastal",
+          "idf": 0.0,
+          "tf": {
+            "length": 1,
+            "max": 1,
+            "mean": 1.0,
+            "min": 1,
+            "sum": 1,
+            "vector": [
+              1
+            ]
+          },
+          "tfidf": {
+            "length": 1,
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "sum": 0.0,
+            "vector": [
+              0.0
+            ]
+          }
+        },
+        "county": {
+          "df": 1,
+          "id": "county",
+          "idf": 0.0,
+          "tf": {
+            "length": 1,
+            "max": 1,
+            "mean": 1.0,
+            "min": 1,
+            "sum": 1,
+            "vector": [
+              1
+            ]
+          },
+          "tfidf": {
+            "length": 1,
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "sum": 0.0,
+            "vector": [
+              0.0
+            ]
+          }
+        },
+        "emergency": {
+          "df": 1,
+          "id": "emergency",
+          "idf": 0.0,
+          "tf": {
+            "length": 1,
+            "max": 1,
+            "mean": 1.0,
+            "min": 1,
+            "sum": 1,
+            "vector": [
+              1
+            ]
+          },
+          "tfidf": {
+            "length": 1,
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "sum": 0.0,
+            "vector": [
+              0.0
+            ]
+          }
+        },
+        "evacuated": {
+          "df": 1,
+          "id": "evacuated",
+          "idf": 0.0,
+          "tf": {
+            "length": 1,
+            "max": 1,
+            "mean": 1.0,
+            "min": 1,
+            "sum": 1,
+            "vector": [
+              1
+            ]
+          },
+          "tfidf": {
+            "length": 1,
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "sum": 0.0,
+            "vector": [
+              0.0
+            ]
+          }
+        },
+        "evacuation": {
+          "df": 1,
+          "id": "evacuation",
+          "idf": 0.0,
+          "tf": {
+            "length": 1,
+            "max": 2,
+            "mean": 2.0,
+            "min": 2,
+            "sum": 2,
+            "vector": [
+              2
+            ]
+          },
+          "tfidf": {
+            "length": 1,
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "sum": 0.0,
+            "vector": [
+              0.0
+            ]
+          }
+        },
+        "for": {
+          "df": 1,
+          "id": "for",
+          "idf": 0.0,
+          "tf": {
+            "length": 1,
+            "max": 1,
+            "mean": 1.0,
+            "min": 1,
+            "sum": 1,
+            "vector": [
+              1
+            ]
+          },
+          "tfidf": {
+            "length": 1,
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "sum": 0.0,
+            "vector": [
+              0.0
+            ]
+          }
+        },
+        "forecast": {
+          "df": 1,
+          "id": "forecast",
+          "idf": 0.0,
+          "tf": {
+            "length": 1,
+            "max": 1,
+            "mean": 1.0,
+            "min": 1,
+            "sum": 1,
+            "vector": [
+              1
+            ]
+          },
+          "tfidf": {
+            "length": 1,
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "sum": 0.0,
+            "vector": [
+              0.0
+            ]
+          }
+        },
+        "from": {
+          "df": 1,
+          "id": "from",
+          "idf": 0.0,
+          "tf": {
+            "length": 1,
+            "max": 1,
+            "mean": 1.0,
+            "min": 1,
+            "sum": 1,
+            "vector": [
+              1
+            ]
+          },
+          "tfidf": {
+            "length": 1,
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "sum": 0.0,
+            "vector": [
+              0.0
+            ]
+          }
+        },
+        "greatest": {
+          "df": 1,
+          "id": "greatest",
+          "idf": 0.0,
+          "tf": {
+            "length": 1,
+            "max": 1,
+            "mean": 1.0,
+            "min": 1,
+            "sum": 1,
+            "vector": [
+              1
+            ]
+          },
+          "tfidf": {
+            "length": 1,
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "sum": 0.0,
+            "vector": [
+              0.0
+            ]
+          }
+        },
+        "hurricane": {
+          "df": 1,
+          "id": "hurricane",
+          "idf": 0.0,
+          "tf": {
+            "length": 1,
+            "max": 2,
+            "mean": 2.0,
+            "min": 2,
+            "sum": 2,
+            "vector": [
+              2
+            ]
+          },
+          "tfidf": {
+            "length": 1,
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "sum": 0.0,
+            "vector": [
+              0.0
+            ]
+          }
+        },
+        "implemented": {
+          "df": 1,
+          "id": "implemented",
+          "idf": 0.0,
+          "tf": {
+            "length": 1,
+            "max": 1,
+            "mean": 1.0,
+            "min": 1,
+            "sum": 1,
+            "vector": [
+              1
+            ]
+          },
+          "tfidf": {
+            "length": 1,
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "sum": 0.0,
+            "vector": [
+              0.0
+            ]
+          }
+        },
+        "in": {
+          "df": 1,
+          "id": "in",
+          "idf": 0.0,
+          "tf": {
+            "length": 1,
+            "max": 3,
+            "mean": 3.0,
+            "min": 3,
+            "sum": 3,
+            "vector": [
+              3
+            ]
+          },
+          "tfidf": {
+            "length": 1,
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "sum": 0.0,
+            "vector": [
+              0.0
+            ]
+          }
+        },
+        "individuals": {
+          "df": 1,
+          "id": "individuals",
+          "idf": 0.0,
+          "tf": {
+            "length": 1,
+            "max": 1,
+            "mean": 1.0,
+            "min": 1,
+            "sum": 1,
+            "vector": [
+              1
+            ]
+          },
+          "tfidf": {
+            "length": 1,
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "sum": 0.0,
+            "vector": [
+              0.0
+            ]
+          }
+        },
+        "is": {
+          "df": 1,
+          "id": "is",
+          "idf": 0.0,
+          "tf": {
+            "length": 1,
+            "max": 1,
+            "mean": 1.0,
+            "min": 1,
+            "sum": 1,
+            "vector": [
+              1
+            ]
+          },
+          "tfidf": {
+            "length": 1,
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "sum": 0.0,
+            "vector": [
+              0.0
+            ]
+          }
+        },
+        "issued": {
+          "df": 1,
+          "id": "issued",
+          "idf": 0.0,
+          "tf": {
+            "length": 1,
+            "max": 1,
+            "mean": 1.0,
+            "min": 1,
+            "sum": 1,
+            "vector": [
+              1
+            ]
+          },
+          "tfidf": {
+            "length": 1,
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "sum": 0.0,
+            "vector": [
+              0.0
+            ]
+          }
+        },
+        "keys": {
+          "df": 1,
+          "id": "keys",
+          "idf": 0.0,
+          "tf": {
+            "length": 1,
+            "max": 1,
+            "mean": 1.0,
+            "min": 1,
+            "sum": 1,
+            "vector": [
+              1
+            ]
+          },
+          "tfidf": {
+            "length": 1,
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "sum": 0.0,
+            "vector": [
+              0.0
+            ]
+          }
+        },
+        "later": {
+          "df": 1,
+          "id": "later",
+          "idf": 0.0,
+          "tf": {
+            "length": 1,
+            "max": 1,
+            "mean": 1.0,
+            "min": 1,
+            "sum": 1,
+            "vector": [
+              1
+            ]
+          },
+          "tfidf": {
+            "length": 1,
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "sum": 0.0,
+            "vector": [
+              0.0
+            ]
+          }
+        },
+        "level": {
+          "df": 1,
+          "id": "level",
+          "idf": 0.0,
+          "tf": {
+            "length": 1,
+            "max": 1,
+            "mean": 1.0,
+            "min": 1,
+            "sum": 1,
+            "vector": [
+              1
+            ]
+          },
+          "tfidf": {
+            "length": 1,
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "sum": 0.0,
+            "vector": [
+              0.0
+            ]
+          }
+        },
+        "likely": {
+          "df": 1,
+          "id": "likely",
+          "idf": 0.0,
+          "tf": {
+            "length": 1,
+            "max": 1,
+            "mean": 1.0,
+            "min": 1,
+            "sum": 1,
+            "vector": [
+              1
+            ]
+          },
+          "tfidf": {
+            "length": 1,
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "sum": 0.0,
+            "vector": [
+              0.0
+            ]
+          }
+        },
+        "major": {
+          "df": 1,
+          "id": "major",
+          "idf": 0.0,
+          "tf": {
+            "length": 1,
+            "max": 1,
+            "mean": 1.0,
+            "min": 1,
+            "sum": 1,
+            "vector": [
+              1
+            ]
+          },
+          "tfidf": {
+            "length": 1,
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "sum": 0.0,
+            "vector": [
+              0.0
+            ]
+          }
+        },
+        "mandatory": {
+          "df": 1,
+          "id": "mandatory",
+          "idf": 0.0,
+          "tf": {
+            "length": 1,
+            "max": 1,
+            "mean": 1.0,
+            "min": 1,
+            "sum": 1,
+            "vector": [
+              1
+            ]
+          },
+          "tfidf": {
+            "length": 1,
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "sum": 0.0,
+            "vector": [
+              0.0
+            ]
+          }
+        },
+        "now": {
+          "df": 1,
+          "id": "now",
+          "idf": 0.0,
+          "tf": {
+            "length": 1,
+            "max": 1,
+            "mean": 1.0,
+            "min": 1,
+            "sum": 1,
+            "vector": [
+              1
+            ]
+          },
+          "tfidf": {
+            "length": 1,
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "sum": 0.0,
+            "vector": [
+              0.0
+            ]
+          }
+        },
+        "of": {
+          "df": 1,
+          "id": "of",
+          "idf": 0.0,
+          "tf": {
+            "length": 1,
+            "max": 2,
+            "mean": 2.0,
+            "min": 2,
+            "sum": 2,
+            "vector": [
+              2
+            ]
+          },
+          "tfidf": {
+            "length": 1,
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "sum": 0.0,
+            "vector": [
+              0.0
+            ]
+          }
+        },
+        "on": {
+          "df": 1,
+          "id": "on",
+          "idf": 0.0,
+          "tf": {
+            "length": 1,
+            "max": 1,
+            "mean": 1.0,
+            "min": 1,
+            "sum": 1,
+            "vector": [
+              1
+            ]
+          },
+          "tfidf": {
+            "length": 1,
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "sum": 0.0,
+            "vector": [
+              0.0
+            ]
+          }
+        },
+        "one": {
+          "df": 1,
+          "id": "one",
+          "idf": 0.0,
+          "tf": {
+            "length": 1,
+            "max": 1,
+            "mean": 1.0,
+            "min": 1,
+            "sum": 1,
+            "vector": [
+              1
+            ]
+          },
+          "tfidf": {
+            "length": 1,
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "sum": 0.0,
+            "vector": [
+              0.0
+            ]
+          }
+        },
+        "order": {
+          "df": 1,
+          "id": "order",
+          "idf": 0.0,
+          "tf": {
+            "length": 1,
+            "max": 2,
+            "mean": 2.0,
+            "min": 2,
+            "sum": 2,
+            "vector": [
+              2
+            ]
+          },
+          "tfidf": {
+            "length": 1,
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "sum": 0.0,
+            "vector": [
+              0.0
+            ]
+          }
+        },
+        "past": {
+          "df": 1,
+          "id": "past",
+          "idf": 0.0,
+          "tf": {
+            "length": 1,
+            "max": 1,
+            "mean": 1.0,
+            "min": 1,
+            "sum": 1,
+            "vector": [
+              1
+            ]
+          },
+          "tfidf": {
+            "length": 1,
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "sum": 0.0,
+            "vector": [
+              0.0
+            ]
+          }
+        },
+        "possibly": {
+          "df": 1,
+          "id": "possibly",
+          "idf": 0.0,
+          "tf": {
+            "length": 1,
+            "max": 1,
+            "mean": 1.0,
+            "min": 1,
+            "sum": 1,
+            "vector": [
+              1
+            ]
+          },
+          "tfidf": {
+            "length": 1,
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "sum": 0.0,
+            "vector": [
+              0.0
+            ]
+          }
+        },
+        "preparation": {
+          "df": 1,
+          "id": "preparation",
+          "idf": 0.0,
+          "tf": {
+            "length": 1,
+            "max": 1,
+            "mean": 1.0,
+            "min": 1,
+            "sum": 1,
+            "vector": [
+              1
+            ]
+          },
+          "tfidf": {
+            "length": 1,
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "sum": 0.0,
+            "vector": [
+              0.0
+            ]
+          }
+        },
+        "refuge": {
+          "df": 1,
+          "id": "refuge",
+          "idf": 0.0,
+          "tf": {
+            "length": 1,
+            "max": 1,
+            "mean": 1.0,
+            "min": 1,
+            "sum": 1,
+            "vector": [
+              1
+            ]
+          },
+          "tfidf": {
+            "length": 1,
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "sum": 0.0,
+            "vector": [
+              0.0
+            ]
+          }
+        },
+        "services": {
+          "df": 1,
+          "id": "services",
+          "idf": 0.0,
+          "tf": {
+            "length": 1,
+            "max": 1,
+            "mean": 1.0,
+            "min": 1,
+            "sum": 1,
+            "vector": [
+              1
+            ]
+          },
+          "tfidf": {
+            "length": 1,
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "sum": 0.0,
+            "vector": [
+              0.0
+            ]
+          }
+        },
+        "some": {
+          "df": 1,
+          "id": "some",
+          "idf": 0.0,
+          "tf": {
+            "length": 1,
+            "max": 1,
+            "mean": 1.0,
+            "min": 1,
+            "sum": 1,
+            "vector": [
+              1
+            ]
+          },
+          "tfidf": {
+            "length": 1,
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "sum": 0.0,
+            "vector": [
+              0.0
+            ]
+          }
+        },
+        "strengthen": {
+          "df": 1,
+          "id": "strengthen",
+          "idf": 0.0,
+          "tf": {
+            "length": 1,
+            "max": 1,
+            "mean": 1.0,
+            "min": 1,
+            "sum": 1,
+            "vector": [
+              1
+            ]
+          },
+          "tfidf": {
+            "length": 1,
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "sum": 0.0,
+            "vector": [
+              0.0
+            ]
+          }
+        },
+        "survivors": {
+          "df": 1,
+          "id": "survivors",
+          "idf": 0.0,
+          "tf": {
+            "length": 1,
+            "max": 1,
+            "mean": 1.0,
+            "min": 1,
+            "sum": 1,
+            "vector": [
+              1
+            ]
+          },
+          "tfidf": {
+            "length": 1,
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "sum": 0.0,
+            "vector": [
+              0.0
+            ]
+          }
+        },
+        "taking": {
+          "df": 1,
+          "id": "taking",
+          "idf": 0.0,
+          "tf": {
+            "length": 1,
+            "max": 1,
+            "mean": 1.0,
+            "min": 1,
+            "sum": 1,
+            "vector": [
+              1
+            ]
+          },
+          "tfidf": {
+            "length": 1,
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "sum": 0.0,
+            "vector": [
+              0.0
+            ]
+          }
+        },
+        "the": {
+          "df": 1,
+          "id": "the",
+          "idf": 0.0,
+          "tf": {
+            "length": 1,
+            "max": 3,
+            "mean": 3.0,
+            "min": 3,
+            "sum": 3,
+            "vector": [
+              3
+            ]
+          },
+          "tfidf": {
+            "length": 1,
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "sum": 0.0,
+            "vector": [
+              0.0
+            ]
+          }
+        },
+        "threat": {
+          "df": 1,
+          "id": "threat",
+          "idf": 0.0,
+          "tf": {
+            "length": 1,
+            "max": 1,
+            "mean": 1.0,
+            "min": 1,
+            "sum": 1,
+            "vector": [
+              1
+            ]
+          },
+          "tfidf": {
+            "length": 1,
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "sum": 0.0,
+            "vector": [
+              0.0
+            ]
+          }
+        },
+        "threatened": {
+          "df": 1,
+          "id": "threatened",
+          "idf": 0.0,
+          "tf": {
+            "length": 1,
+            "max": 1,
+            "mean": 1.0,
+            "min": 1,
+            "sum": 1,
+            "vector": [
+              1
+            ]
+          },
+          "tfidf": {
+            "length": 1,
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "sum": 0.0,
+            "vector": [
+              0.0
+            ]
+          }
+        },
+        "to": {
+          "df": 1,
+          "id": "to",
+          "idf": 0.0,
+          "tf": {
+            "length": 1,
+            "max": 4,
+            "mean": 4.0,
+            "min": 4,
+            "sum": 4,
+            "vector": [
+              4
+            ]
+          },
+          "tfidf": {
+            "length": 1,
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "sum": 0.0,
+            "vector": [
+              0.0
+            ]
+          }
+        },
+        "upgraded": {
+          "df": 1,
+          "id": "upgraded",
+          "idf": 0.0,
+          "tf": {
+            "length": 1,
+            "max": 1,
+            "mean": 1.0,
+            "min": 1,
+            "sum": 1,
+            "vector": [
+              1
+            ]
+          },
+          "tfidf": {
+            "length": 1,
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "sum": 0.0,
+            "vector": [
+              0.0
+            ]
+          }
+        },
+        "uprooted": {
+          "df": 1,
+          "id": "uprooted",
+          "idf": 0.0,
+          "tf": {
+            "length": 1,
+            "max": 1,
+            "mean": 1.0,
+            "min": 1,
+            "sum": 1,
+            "vector": [
+              1
+            ]
+          },
+          "tfidf": {
+            "length": 1,
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "sum": 0.0,
+            "vector": [
+              0.0
+            ]
+          }
+        },
+        "was": {
+          "df": 1,
+          "id": "was",
+          "idf": 0.0,
+          "tf": {
+            "length": 1,
+            "max": 2,
+            "mean": 2.0,
+            "min": 2,
+            "sum": 2,
+            "vector": [
+              2
+            ]
+          },
+          "tfidf": {
+            "length": 1,
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "sum": 0.0,
+            "vector": [
+              0.0
+            ]
+          }
+        },
+        "week": {
+          "df": 1,
+          "id": "week",
+          "idf": 0.0,
+          "tf": {
+            "length": 1,
+            "max": 1,
+            "mean": 1.0,
+            "min": 1,
+            "sum": 1,
+            "vector": [
+              1
+            ]
+          },
+          "tfidf": {
+            "length": 1,
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "sum": 0.0,
+            "vector": [
+              0.0
+            ]
+          }
+        },
+        "were": {
+          "df": 1,
+          "id": "were",
+          "idf": 0.0,
+          "tf": {
+            "length": 1,
+            "max": 2,
+            "mean": 2.0,
+            "min": 2,
+            "sum": 2,
+            "vector": [
+              2
+            ]
+          },
+          "tfidf": {
+            "length": 1,
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "sum": 0.0,
+            "vector": [
+              0.0
+            ]
+          }
+        },
+        "will": {
+          "df": 1,
+          "id": "will",
+          "idf": 0.0,
+          "tf": {
+            "length": 1,
+            "max": 1,
+            "mean": 1.0,
+            "min": 1,
+            "sum": 1,
+            "vector": [
+              1
+            ]
+          },
+          "tfidf": {
+            "length": 1,
+            "max": 0.0,
+            "mean": 0.0,
+            "min": 0.0,
+            "sum": 0.0,
+            "vector": [
+              0.0
+            ]
+          }
+        }
+      }
+    }
+  },
+  "meta": {
+    "document_order": {},
+    "document_type": "paragraph"
+  }
+}
