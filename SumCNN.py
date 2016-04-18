@@ -68,8 +68,6 @@ def sgd_optimization_sum(learning_rate=0.13, n_epochs=10000000,
         for minibatch_index in range(models.n_train_batches):
             minibatch_avg_cost = models.train_model(minibatch_index)
 
-            #print('train error %f' % minibatch_avg_cost)
-
             # iteration number
             iter = (epoch - 1) * models.n_train_batches + minibatch_index
 
@@ -147,7 +145,7 @@ def predict():
         inputs=[classifier.input],
         outputs=classifier.y_pred)
 
-    test_set_x = [[0, 0, 2, 4, 3, 9, 0, 2, 2, 2, 3, 1, 2]]
+    test_set_x = [[0, 0, 0, 0, 0, 0, 199, 0, 0, 0,0,0]]
     predicted_values = predict_model(test_set_x)
     print("Predicted values")
     print(predicted_values)

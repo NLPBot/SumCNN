@@ -75,13 +75,13 @@ class BuildModel(object):
         x = T.matrix('x')  # data
         y = T.ivector('y')  # probs, presented as 1D vector of [int] labels
 
-        feature_num = 13
+        feature_num = 12
 
-####################### start of CNN ############################
+        ####################### start of CNN #########################
         
         # Initialize parameters
         rng = numpy.random.RandomState(23455)
-        nkerns=20
+        nkerns=200
         v_height = feature_num # to be change 
         image_height = v_height
         image_width = 1
@@ -113,20 +113,21 @@ class BuildModel(object):
         # or (2, 20 * 6 * 1) = (2, 120) with the default values.
         conv_layer_output = conv_layer.output.flatten(2)
         
-####################### End of CNN ##############################
+        ####################### End of CNN ##############################
 
         ## Concatenate x with word2vec ##
         #input_x = T.concatenate( [x,word_vec], axis=0 )
 
         input_x = conv_layer_output
+        layer_dim = [ 5000, 2500 ]
 
         # Set up vars
         rng = numpy.random.RandomState(23455)
         #n_in_0 = feature_num
         n_in_0 = nkerns*(v_height-filter_height+1)/pool_height
-        n_out_0 = 5000
+        n_out_0 = layer_dim[0]
 
-        # construct a fully-connected sigmoidal layer
+        # construct a fully-connected tanh layer
         layer0 = HiddenLayer(
             rng,
             input=input_x,
@@ -135,9 +136,9 @@ class BuildModel(object):
             activation=T.tanh
         )
 
-        # construct a fully-connected sigmoidal layer
+        # construct a fully-connected tanh layer
         n_in_1 = n_out_0
-        n_out_1 = feature_num
+        n_out_1 = layer_dim[1]
         layer1 = HiddenLayer(
             rng,
             input=layer0.output,
@@ -146,9 +147,20 @@ class BuildModel(object):
             activation=T.tanh
         )
 
-        # classify the values of the fully-connected sigmoidal layer
-        num_of_class = 3 # (sim > 0.75 => 2), (sim < 0.25 => 0), (0.25<sim<0.75 => 1)        
-        self.classifier = LogisticRegression(input=layer1.output, n_in=n_out_1, n_out=num_of_class)
+        # construct a fully-connected tanh layer
+        n_in_2 = n_out_1
+        n_out_2 = feature_num
+        layer2 = HiddenLayer(
+            rng,
+            input=layer1.output,
+            n_in=n_in_2,
+            n_out=n_out_2,
+            activation=T.tanh
+        )
+
+        # classify the values of the fully-connected tanh layer
+        num_of_class = 10 # divided into 10 classes        
+        self.classifier = LogisticRegression(input=layer2.output, n_in=n_out_2, n_out=num_of_class)
 
         # cost = negative log likelihood in symbolic format
         cost = self.classifier.negative_log_likelihood(y)
@@ -173,7 +185,7 @@ class BuildModel(object):
         )
 
         # create a update list by gradient descent
-        params = layer1.params + layer0.params + [self.classifier.W, self.classifier.b] #+ conv_layer.params 
+        params = layer2.params + layer1.params + layer0.params + [self.classifier.W, self.classifier.b] #+ conv_layer.params 
         grads = T.grad(cost, params)
         updates = [
             (param_i, param_i - learning_rate * grad_i)
@@ -190,14 +202,7 @@ class BuildModel(object):
                 y: train_set_y[index * batch_size: (index + 1) * batch_size]
             }
         )
-
-    def load_word2vec(self):
-        print "loading data...",
-        x = cPickle.load(open("mr.p","rb"))
-        self.revs, W, W2, word_idx_map, vocab = x[0], x[1], x[2], x[3], x[4]
-        print "data loaded!"
         
-
     def load_data(self,dataset,batch_size):
         ''' Loads the dataset
         :type dataset: string
