@@ -72,13 +72,17 @@ class BuildModel(object):
         index = T.lscalar()  # index to a [mini]batch
 
         # generate symbolic variables for input (x and y represent a minibatch)
-        x = T.matrix('x')  # data
+        x = T.matrix('x')  # data from features
+        #word2vec = T.matrix('wv') # data from vectors
         y = T.ivector('y')  # probs, presented as 1D vector of [int] labels
 
-        feature_num = 12
+        feature_num = 313
+        
+        ####### word2vec #######
+        #word2vec_num = 300
 
         ####################### start of CNN #########################
-        
+        """
         # Initialize parameters
         rng = numpy.random.RandomState(23455)
         nkerns=200
@@ -112,22 +116,23 @@ class BuildModel(object):
         # This will generate a matrix of shape (batch_size, nkerns*6*1),
         # or (2, 20 * 6 * 1) = (2, 120) with the default values.
         conv_layer_output = conv_layer.output.flatten(2)
-        
+        """
         ####################### End of CNN ##############################
 
         ## Concatenate x with word2vec ##
-        #input_x = T.concatenate( [x,word_vec], axis=0 )
+        #input_x = T.concatenate( [x,conv_layer_output], axis=0 )
 
-        input_x = conv_layer_output
-        layer_dim = [ 5000, 2500 ]
+        #input_x = conv_layer_output
+        input_x = x
+        layer_dim = [ 50000, 25000 ]
 
         # Set up vars
         rng = numpy.random.RandomState(23455)
-        #n_in_0 = feature_num
-        n_in_0 = nkerns*(v_height-filter_height+1)/pool_height
+        n_in_0 = feature_num
+        #n_in_0 = nkerns*(v_height-filter_height+1)/pool_height #+ feature_num
         n_out_0 = layer_dim[0]
 
-        # construct a fully-connected tanh layer
+        # first fully-connected tanh layer
         layer0 = HiddenLayer(
             rng,
             input=input_x,
@@ -136,7 +141,7 @@ class BuildModel(object):
             activation=T.tanh
         )
 
-        # construct a fully-connected tanh layer
+        # second fully-connected tanh layer
         n_in_1 = n_out_0
         n_out_1 = layer_dim[1]
         layer1 = HiddenLayer(
@@ -147,7 +152,7 @@ class BuildModel(object):
             activation=T.tanh
         )
 
-        # construct a fully-connected tanh layer
+        # third fully-connected tanh layer
         n_in_2 = n_out_1
         n_out_2 = feature_num
         layer2 = HiddenLayer(
@@ -159,7 +164,7 @@ class BuildModel(object):
         )
 
         # classify the values of the fully-connected tanh layer
-        num_of_class = 10 # divided into 10 classes        
+        num_of_class = 101 # divided into 101 classes        
         self.classifier = LogisticRegression(input=layer2.output, n_in=n_out_2, n_out=num_of_class)
 
         # cost = negative log likelihood in symbolic format
@@ -227,7 +232,7 @@ class BuildModel(object):
                                      borrow=borrow)
             shared_y = theano.shared(numpy.asarray(data_y,
                                                    dtype=theano.config.floatX),
-                                     borrow=borrow)
+                                     borrow=borrow)       
 
             return shared_x, T.cast(shared_y, 'int32')
 
