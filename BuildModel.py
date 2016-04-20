@@ -76,7 +76,7 @@ class BuildModel(object):
         #word2vec = T.matrix('wv') # data from vectors
         y = T.ivector('y')  # probs, presented as 1D vector of [int] labels
 
-        feature_num = 313
+        feature_num = 13
         
         ####### word2vec #######
         #word2vec_num = 300
@@ -124,7 +124,7 @@ class BuildModel(object):
 
         #input_x = conv_layer_output
         input_x = x
-        layer_dim = [ 50000, 25000 ]
+        layer_dim = [ 9, 9 ]
 
         # Set up vars
         rng = numpy.random.RandomState(23455)

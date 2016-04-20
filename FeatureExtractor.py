@@ -22,8 +22,6 @@ def read_gold_sum():
     sum_dict = {}
     gold_sum = ''
     data_dir = os.path.join('data','gold_sum')
-    #stopwords = nltk.corpus.stopwords.words('english')
-    #word2vec = load_word2vec()
 
     print 'reading gold summaries...',
     for file_name in os.listdir(data_dir):
@@ -50,8 +48,8 @@ def get_data_pair(training=True):
     score = 0
     if training:
         sum_dict = read_gold_sum()
-    word2vec = load_word2vec()
-    stopwords = nltk.corpus.stopwords.words('english')
+    #word2vec = load_word2vec()
+    #stopwords = nltk.corpus.stopwords.words('english')
     sub_dirs = ['feat_docs_para','feat_docs_sent','feat_model_para','feat_model_sent']
 
     data_dir = os.path.join('data',sub_dirs[1])
@@ -87,15 +85,15 @@ def get_data_pair(training=True):
 
             # get actual sentence
             actual_sent = ''
-            wordvec = numpy.array([0.]*300)
+            #wordvec = numpy.array([0.]*300)
             for word in x['order']['word']['text']:
-                if str(word) in word2vec.keys() and str(word) not in stopwords: 
-                    wordvec += word2vec[word]
+                #if str(word) in word2vec.keys() and str(word) not in stopwords: 
+                #    wordvec += word2vec[word]
                 actual_sent += word + ' '
             actual_sent_list.append(actual_sent)
 
-            wordvec = wordvec / len(x['order']['word']['text'])
-            feat_vec.extend(wordvec)
+            #wordvec = wordvec / len(x['order']['word']['text'])
+            #feat_vec.extend(wordvec)
 
             # 30 features
             # get list of tf-idf scores
@@ -122,6 +120,6 @@ def get_data_pair(training=True):
 
 if __name__=="__main__":
     # pre-set
-    feat_num = 313
-    pickle.dump( get_data_pair(training=True), open('sum.pkl','wb') )
+    feat_num = 13
+    pickle.dump( get_data_pair(training=False), open('sum.pkl','wb') )
 

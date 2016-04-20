@@ -131,7 +131,7 @@ def sgd_optimization_sum(learning_rate=0.13, n_epochs=10000000,
     print('The code run for %d epochs, with %f epochs/sec' % (  \
         epoch, 1. * epoch / (end_time - start_time)))
     #print(('The code for file '+os.path.split(__file__)[1] + ' ran for %.1fs' % ((end_time - start_time))), file=sys.stderr)
-
+ 
 def predict():
     """
     load a trained model and use it to predict prob.
@@ -152,4 +152,4 @@ def predict():
 
 if __name__ == '__main__':
     sgd_optimization_sum()
-    predict()
+    #predict()
