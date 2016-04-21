@@ -14,9 +14,9 @@ import sys
 import timeit
 import pickle
 
-def sgd_optimization_sum(learning_rate=0.13, n_epochs=10000000,
+def sgd_optimization_sum(learning_rate=0.13, n_epochs=2000,
                            dataset='sum.pkl',
-                           batch_size=2):
+                           batch_size=100):
     """
     Gradient descent optimization of a log-linear
     model
@@ -38,7 +38,7 @@ def sgd_optimization_sum(learning_rate=0.13, n_epochs=10000000,
     # MODEL SETUP #
     ###############
     models = BuildModel( 	learning_rate=0.13, 
-    						n_epochs=1000,
+    						n_epochs=2000,
                 			dataset='sum.pkl',
                 			batch_size=batch_size )
 

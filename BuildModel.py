@@ -19,9 +19,9 @@ from theano.tensor.nnet import conv2d
 import pickle
 
 class BuildModel(object):
-    def __init__(self,learning_rate=0.13, n_epochs=10000000,
-                           dataset='sum.pkl.gz',
-                           batch_size=2):
+    def __init__(self,learning_rate=0.13, n_epochs=2000,
+                           dataset='sum.pkl',
+                           batch_size=100):
         """
         stochastic gradient descent optimization of a log-linear model
 
@@ -73,10 +73,10 @@ class BuildModel(object):
 
         # generate symbolic variables for input (x and y represent a minibatch)
         x = T.matrix('x')  # data from features
-        #word2vec = T.matrix('wv') # data from vectors
+        #wv = T.matrix('wv') # data from vectors
         y = T.ivector('y')  # probs, presented as 1D vector of [int] labels
 
-        feature_num = 13
+        feature_num = 220
         
         ####### word2vec #######
         #word2vec_num = 300
@@ -86,7 +86,7 @@ class BuildModel(object):
         # Initialize parameters
         rng = numpy.random.RandomState(23455)
         nkerns=200
-        v_height = feature_num # to be change 
+        v_height = word2vec_num # to be change 
         image_height = v_height
         image_width = 1
         filter_height = 2 if v_height%2==1 else 3
@@ -97,7 +97,7 @@ class BuildModel(object):
         # Reshape matrix of rasterized images of shape (batch_size, 1 * 13)
         # to a 4D tensor, compatible with our LeNetConvPoolLayer
         # (13,) is the size of feature vectors.
-        conv_layer_input = x.reshape((batch_size, 1, image_height, image_width))
+        conv_layer_input = wv.reshape((batch_size, 1, image_height, image_width))
 
         # Construct the first convolutional pooling layer:
         # filtering reduces the image size to (13-2+1 , 1) = (12, 1)
@@ -121,15 +121,14 @@ class BuildModel(object):
 
         ## Concatenate x with word2vec ##
         #input_x = T.concatenate( [x,conv_layer_output], axis=0 )
-
         #input_x = conv_layer_output
         input_x = x
-        layer_dim = [ 9, 9 ]
-
+        
         # Set up vars
         rng = numpy.random.RandomState(23455)
         n_in_0 = feature_num
-        #n_in_0 = nkerns*(v_height-filter_height+1)/pool_height #+ feature_num
+        #n_in_0 = nkerns*(v_height-filter_height+1)/pool_height + feature_num
+        layer_dim = [ n_in_0/3*2, n_in_0/9*4 ]
         n_out_0 = layer_dim[0]
 
         # first fully-connected tanh layer
@@ -177,6 +176,7 @@ class BuildModel(object):
             givens={
                 x: test_set_x[index * batch_size: (index + 1) * batch_size],
                 y: test_set_y[index * batch_size: (index + 1) * batch_size]
+                #wv: test_set_z[index * batch_size: (index + 1) * batch_size]
             }
         )
 
@@ -186,6 +186,7 @@ class BuildModel(object):
             givens={
                 x: valid_set_x[index * batch_size: (index + 1) * batch_size],
                 y: valid_set_y[index * batch_size: (index + 1) * batch_size]
+                #wv: valid_set_z[index * batch_size: (index + 1) * batch_size]
             }
         )
 
@@ -205,6 +206,7 @@ class BuildModel(object):
             givens={
                 x: train_set_x[index * batch_size: (index + 1) * batch_size],
                 y: train_set_y[index * batch_size: (index + 1) * batch_size]
+                #wv: train_set_z[index * batch_size: (index + 1) * batch_size]
             }
         )
         
@@ -232,9 +234,12 @@ class BuildModel(object):
                                      borrow=borrow)
             shared_y = theano.shared(numpy.asarray(data_y,
                                                    dtype=theano.config.floatX),
-                                     borrow=borrow)       
+                                     borrow=borrow)    
+            #shared_z = theano.shared(numpy.asarray(data_z,
+            #                                       dtype=theano.config.floatX),
+            #                         borrow=borrow)                                    
 
-            return shared_x, T.cast(shared_y, 'int32')
+            return shared_x, T.cast(shared_y, 'int32')#, shared_z
 
         test_set_x, test_set_y = shared_dataset(test_set)
         valid_set_x, valid_set_y = shared_dataset(valid_set)

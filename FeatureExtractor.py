@@ -1,37 +1,46 @@
 import json
 from pprint import pprint
-import os, cPickle
-import pickle
+import os, pickle, sys
 from SentSim import *
 import nltk
 from nltk.corpus import stopwords
-from predict import *
+from som import *
+import gensim
+import numpy as np
 
 def load_word2vec():
-    print "loading data...",
-    x = cPickle.load(open("word2vec.pkl","rb"))
-    word2vec = x[0]
-    print "data loaded!"
-    return word2vec
+    return gensim.models.Word2Vec.load_word2vec_format('GoogleNews-vectors-negative300.bin',binary=True)
     
-def get_sim(sent,summary):
-    ratio = float(len(summary.split()))/float(len(sent.split()))
-    return (binary_similarity(sent,summary)+frequency_similarity(sent,summary))/2
+def get_sim(sent,summary,model,stopwords):
+    gold_sum = []
+    for word in summary.split():
+        if str(word) in model and str(word) not in stopwords: 
+            gold_sum.append( word )
+    score = model.n_similarity(gold_sum, sent.split())
+    if "array" in str(type(score)):
+        return 0.0
+    return score
 
 def read_gold_sum():
     sum_dict = {}
     gold_sum = ''
-    data_dir = os.path.join('data','gold_sum')
+    sub_dirs = ['feat_docs_para','feat_docs_sent','feat_model_para','feat_model_sent']
+    data_dir = os.path.join('data',sub_dirs[3])
 
-    print 'reading gold summaries...',
+    print('reading gold summaries...')
     for file_name in os.listdir(data_dir):
-        with open('data/gold_sum/'+file_name) as data_file: 
-			gold_sum = data_file.read()
+        print(file_name)
+        with open('data/'+sub_dirs[3]+'/'+file_name) as data_file:
+            data = json.load(data_file)
+        gold_sum = ''
+        for word in data['data']['documents']['document']:
+            # get summary
+            gold_sum += list(word.keys())[0] + ' '
         if file_name[:5] not in sum_dict.keys(): 
-			sum_dict[file_name[:5]] = [ gold_sum ]
+            sum_dict[file_name[:5]] = [ gold_sum ]
         else:
-			sum_dict[file_name[:5]].append( gold_sum )
-    print 'Done reading gold summaries...'
+            sum_dict[file_name[:5]].append( gold_sum )
+    print('Done reading gold summaries...')
     return sum_dict
 
 def get_ratio(e,total):
@@ -40,31 +49,35 @@ def get_ratio(e,total):
 def get_score_label(score):
     return int(score*100)
 
-def get_data_pair(training=True):
+def get_num_of_punc(sent_list,punc):
+    count = 0
+    for word in sent_list:
+        if word in punc:
+            count += 1
+    return count
 
-    feat_vec_list = []
-    feat_vec_list_predict = []
-    scores = []
+def get_data_pair(predict=False):
+    global feat_num
+
+    # setting up
+    feat_vec_list, scores = [], []
     score = 0
-    if training:
-        sum_dict = read_gold_sum()
-    #word2vec = load_word2vec()
-    #stopwords = nltk.corpus.stopwords.words('english')
-    sub_dirs = ['feat_docs_para','feat_docs_sent','feat_model_para','feat_model_sent']
+    if not(predict): sum_dict = read_gold_sum()
+    model = load_word2vec()
+    stopwords = nltk.corpus.stopwords.words('english')
 
+    sub_dirs = ['feat_docs_para','feat_docs_sent','feat_model_para','feat_model_sent']
     data_dir = os.path.join('data',sub_dirs[1])
-    score_index = 0
     for file_name in os.listdir(data_dir):
         with open('data/'+sub_dirs[1]+'/'+file_name) as data_file:    
             data = json.load(data_file)
-
+        print('within file '+file_name[:5])
         actual_sent_list = []
         pos_list = []
-        feat_vec_list_predict = []
+        p_feat_vec_list = []
         for x in data['data']['documents']['document']:
             # append feature list
             feat_vec = []
-
             # 12 features
             feat_vec.append(x['conj']['+'])
             feat_vec.append(x['conj']['-'])
@@ -85,41 +98,61 @@ def get_data_pair(training=True):
 
             # get actual sentence
             actual_sent = ''
-            #wordvec = numpy.array([0.]*300)
+            word2vec_sent = ''
             for word in x['order']['word']['text']:
-                #if str(word) in word2vec.keys() and str(word) not in stopwords: 
-                #    wordvec += word2vec[word]
+                if str(word) in model and str(word) not in stopwords: 
+                    word2vec_sent += word + ' '
                 actual_sent += word + ' '
-            actual_sent_list.append(actual_sent)
+            actual_sent_list.append(actual_sent) 
 
-            #wordvec = wordvec / len(x['order']['word']['text'])
-            #feat_vec.extend(wordvec)
+            feat_vec.append(get_num_of_punc(x['order']['word']['text'],'"'))
+            feat_vec.append(get_num_of_punc(x['order']['word']['text'],'.'))
+            feat_vec.append(get_num_of_punc(x['order']['word']['text'],'?'))
+            feat_vec.append(get_num_of_punc(x['order']['word']['text'],':'))
+            feat_vec.append(get_num_of_punc(x['order']['word']['text'],';'))
+            feat_vec.append(get_num_of_punc(x['order']['word']['text'],')'))
+            feat_vec.append(get_num_of_punc(x['order']['word']['text'],'('))
+            feat_vec.append(get_num_of_punc(x['order']['word']['text'],'/'))
 
             # 30 features
             # get list of tf-idf scores
             tfidf = []
             for score in x['order']['word']['tfidf']:
                 tfidf.append(score)
-            tfidf.extend( [0.]*(100-len(tfidf)) )
-            feat_vec.append(max(tfidf)) # temporary
+            tfidf.extend( [0.]*(200-len(tfidf)) )
+            feat_vec.extend(tfidf) # temporary
             
             # append x_set, y_set
+            feat_num = len(feat_vec)
             feat_vec_list.append( feat_vec )
-            if not(training):
-                feat_vec_list_predict.append( feat_vec )
 
             # update score list
-            if training:
-                score = get_sim(actual_sent,sum_dict[file_name[:5]][0]) # to get similarity score
-                scores.append(get_score_label(score))
-        if not(training):
-            predict(file_name, actual_sent_list, pos_list, feat_vec_list_predict)
+            if not(predict):
+                score = 0.0
+                for summary in sum_dict[file_name[:5]]:
+                    score += get_sim(word2vec_sent,summary,model,stopwords) # to get similarity score
+                    doc_num = len(sum_dict[file_name[:5]])
+                score = get_score_label(float(score/doc_num))
+                if score<0: score = 0
+                scores.append(score)
+
+            if predict:
+                p_feat_vec_list.append( feat_vec )
+        if predict: 
+            pickle.dump( ( actual_sent_list, p_feat_vec_list, pos_list ), open('predict/'+file_name,'wb'),2 )
 
     print('Total datasets: ' + str(len(feat_vec_list)) )
+    print('Unique_scores: ' + str( len(set(scores)) ) )
     return ( feat_vec_list, scores )
 
 if __name__=="__main__":
-    # pre-set
-    feat_num = 13
-    pickle.dump( get_data_pair(training=False), open('sum.pkl','wb') )
+    global feat_num
+
+    feat_num = 0
+    predict = True if int(sys.argv[1])==1 else False
+    if predict: 
+        get_data_pair(predict=predict)
+    else:
+        pickle.dump( get_data_pair(predict=predict), open('sum.pkl','wb'),2 )
+        print( "There are " + str(feat_num) + ' features')
 
