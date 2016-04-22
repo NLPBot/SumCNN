@@ -7,39 +7,41 @@ from nltk.corpus import stopwords
 from som import *
 import gensim
 import numpy as np
+import xml.etree.ElementTree as ET
 
 def load_word2vec():
     return gensim.models.Word2Vec.load_word2vec_format('GoogleNews-vectors-negative300.bin',binary=True)
     
-def get_sim(sent,summary,model,stopwords):
+def get_sim(sent,summary,model,stopwords,file_name):
     gold_sum = []
+    topic_dict = get_topics()
     for word in summary.split():
         if str(word) in model and str(word) not in stopwords: 
             gold_sum.append( word )
-    score = model.n_similarity(gold_sum, sent.split())
+    target = gold_sum + topic_dict[file_name][0].split() + topic_dict[file_name][1].split()  
+    score = model.n_similarity(target, sent.split())
     if "array" in str(type(score)):
         return 0.0
     return score
 
-def read_gold_sum():
+def read_gold_sum(model):
     sum_dict = {}
     gold_sum = ''
-    sub_dirs = ['feat_docs_para','feat_docs_sent','feat_model_para','feat_model_sent']
-    data_dir = os.path.join('data',sub_dirs[3])
+    data_dir = os.path.join('data','feat_other_sent')
 
     print('reading gold summaries...')
     for file_name in os.listdir(data_dir):
-        print(file_name)
-        with open('data/'+sub_dirs[3]+'/'+file_name) as data_file:
+        with open('data/feat_other_sent/'+file_name) as data_file:
             data = json.load(data_file)
-        gold_sum = ''
-        for word in data['data']['documents']['document']:
-            # get summary
-            gold_sum += list(word.keys())[0] + ' '
-        if file_name[:5] not in sum_dict.keys(): 
-            sum_dict[file_name[:5]] = [ gold_sum ]
-        else:
-            sum_dict[file_name[:5]].append( gold_sum )
+        for x in data['data']['documents']['document']:
+            gold_sum = ''
+            for word in x['order']['lemma']['text']:
+                # get summary
+                gold_sum += word + ' '
+            if file_name[:5] not in sum_dict.keys(): 
+                sum_dict[file_name[:5]] = [ gold_sum ]
+            else:
+                sum_dict[file_name[:5]].append( gold_sum )
     print('Done reading gold summaries...')
     return sum_dict
 
@@ -56,14 +58,29 @@ def get_num_of_punc(sent_list,punc):
             count += 1
     return count
 
+def get_topics():
+    topic_dict = {}
+    data_dir = os.path.join('data')
+    tree = ET.parse('data/UpdateSumm09_test_topics.xml')
+    root = tree.getroot()
+    for topic in root:
+        id = topic.attrib['id'][:5]
+        title = ' '.join(topic[0].text.split())
+        narrative = ' '.join(topic[1].text.split())
+        topic_dict[id] = (title,narrative)
+        print(id+' '+title+' '+narrative)
+    print(topic_dict)
+    return topic_dict
+
 def get_data_pair(predict=False):
     global feat_num
 
     # setting up
     feat_vec_list, scores = [], []
     score = 0
-    if not(predict): sum_dict = read_gold_sum()
-    model = load_word2vec()
+    if not(predict): 
+        model = load_word2vec()
+        sum_dict = read_gold_sum(model)
     stopwords = nltk.corpus.stopwords.words('english')
 
     sub_dirs = ['feat_docs_para','feat_docs_sent','feat_model_para','feat_model_sent']
@@ -71,14 +88,14 @@ def get_data_pair(predict=False):
     for file_name in os.listdir(data_dir):
         with open('data/'+sub_dirs[1]+'/'+file_name) as data_file:    
             data = json.load(data_file)
+
         print('within file '+file_name[:5])
-        actual_sent_list = []
-        pos_list = []
-        p_feat_vec_list = []
+        pos_list, p_feat_vec_list, pre_actual_sent_list = [], [], []
+
         for x in data['data']['documents']['document']:
             # append feature list
             feat_vec = []
-            # 12 features
+            # 20 features
             feat_vec.append(x['conj']['+'])
             feat_vec.append(x['conj']['-'])
             feat_vec.append(x['count']['punct'])
@@ -95,16 +112,6 @@ def get_data_pair(predict=False):
             feat_vec.append(get_ratio(float(x['position']['sentence']['paragraph']['forward']),total))
             feat_vec.append(x['ratio']['punct']['word'][0])
             feat_vec.append(x['ratio']['punct']['word'][1])
-
-            # get actual sentence
-            actual_sent = ''
-            word2vec_sent = ''
-            for word in x['order']['word']['text']:
-                if str(word) in model and str(word) not in stopwords: 
-                    word2vec_sent += word + ' '
-                actual_sent += word + ' '
-            actual_sent_list.append(actual_sent) 
-
             feat_vec.append(get_num_of_punc(x['order']['word']['text'],'"'))
             feat_vec.append(get_num_of_punc(x['order']['word']['text'],'.'))
             feat_vec.append(get_num_of_punc(x['order']['word']['text'],'?'))
@@ -113,6 +120,19 @@ def get_data_pair(predict=False):
             feat_vec.append(get_num_of_punc(x['order']['word']['text'],')'))
             feat_vec.append(get_num_of_punc(x['order']['word']['text'],'('))
             feat_vec.append(get_num_of_punc(x['order']['word']['text'],'/'))
+
+            # get actual sentence
+            word2vec_sent = ''
+            if predict:
+                pre_actual_sent = ''
+                for word in x['order']['word']['text']:
+                    if str(word) not in stopwords:
+                        pre_actual_sent += word + ' '
+                pre_actual_sent_list.append(pre_actual_sent) 
+            else:
+                for word in x['order']['lemma']['text']:
+                    if str(word) in model and str(word) not in stopwords: 
+                        word2vec_sent += word + ' '
 
             # 30 features
             # get list of tf-idf scores
@@ -130,7 +150,7 @@ def get_data_pair(predict=False):
             if not(predict):
                 score = 0.0
                 for summary in sum_dict[file_name[:5]]:
-                    score += get_sim(word2vec_sent,summary,model,stopwords) # to get similarity score
+                    score += get_sim(word2vec_sent,summary,model,stopwords,file_name[:5]) # to get similarity score
                     doc_num = len(sum_dict[file_name[:5]])
                 score = get_score_label(float(score/doc_num))
                 if score<0: score = 0
@@ -139,7 +159,7 @@ def get_data_pair(predict=False):
             if predict:
                 p_feat_vec_list.append( feat_vec )
         if predict: 
-            pickle.dump( ( actual_sent_list, p_feat_vec_list, pos_list ), open('predict/'+file_name,'wb'),2 )
+            pickle.dump( ( pre_actual_sent_list, p_feat_vec_list, pos_list ), open('predict/'+file_name,'wb'),2 )
 
     print('Total datasets: ' + str(len(feat_vec_list)) )
     print('Unique_scores: ' + str( len(set(scores)) ) )
@@ -147,8 +167,8 @@ def get_data_pair(predict=False):
 
 if __name__=="__main__":
     global feat_num
-
     feat_num = 0
+    # 1 for predict 0 for training
     predict = True if int(sys.argv[1])==1 else False
     if predict: 
         get_data_pair(predict=predict)
