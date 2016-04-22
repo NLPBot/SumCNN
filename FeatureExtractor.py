@@ -12,14 +12,12 @@ import xml.etree.ElementTree as ET
 def load_word2vec():
     return gensim.models.Word2Vec.load_word2vec_format('GoogleNews-vectors-negative300.bin',binary=True)
     
-def get_sim(sent,summary,model,stopwords,file_name):
+def get_sim(topic_dict,sent,summary,model,stopwords,file_name):
     gold_sum = []
-    topic_dict = get_topics()
-    for word in summary.split():
+    for word in (summary.split()+topic_dict[file_name][0].split()+topic_dict[file_name][1].split()):
         if str(word) in model and str(word) not in stopwords: 
             gold_sum.append( word )
-    target = gold_sum + topic_dict[file_name][0].split() + topic_dict[file_name][1].split()  
-    score = model.n_similarity(target, sent.split())
+    score = model.n_similarity(gold_sum, sent.split())
     if "array" in str(type(score)):
         return 0.0
     return score
@@ -68,8 +66,7 @@ def get_topics():
         title = ' '.join(topic[0].text.split())
         narrative = ' '.join(topic[1].text.split())
         topic_dict[id] = (title,narrative)
-        print(id+' '+title+' '+narrative)
-    print(topic_dict)
+        #print(id+' '+title+' '+narrative)
     return topic_dict
 
 def get_data_pair(predict=False):
@@ -81,6 +78,7 @@ def get_data_pair(predict=False):
     if not(predict): 
         model = load_word2vec()
         sum_dict = read_gold_sum(model)
+        topic_dict = get_topics()
     stopwords = nltk.corpus.stopwords.words('english')
 
     sub_dirs = ['feat_docs_para','feat_docs_sent','feat_model_para','feat_model_sent']
@@ -150,7 +148,7 @@ def get_data_pair(predict=False):
             if not(predict):
                 score = 0.0
                 for summary in sum_dict[file_name[:5]]:
-                    score += get_sim(word2vec_sent,summary,model,stopwords,file_name[:5]) # to get similarity score
+                    score += get_sim(topic_dict,word2vec_sent,summary,model,stopwords,file_name[:5]) # to get similarity score
                     doc_num = len(sum_dict[file_name[:5]])
                 score = get_score_label(float(score/doc_num))
                 if score<0: score = 0
@@ -175,4 +173,3 @@ if __name__=="__main__":
     else:
         pickle.dump( get_data_pair(predict=predict), open('sum.pkl','wb'),2 )
         print( "There are " + str(feat_num) + ' features')
-

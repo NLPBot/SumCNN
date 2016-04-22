@@ -19,7 +19,7 @@ from theano.tensor.nnet import conv2d
 import pickle
 
 class BuildModel(object):
-    def __init__(self,learning_rate=0.13, n_epochs=2000,
+    def __init__(self,learning_rate=0.13, n_epochs=5000,
                            dataset='sum.pkl',
                            batch_size=100):
         """
@@ -163,8 +163,8 @@ class BuildModel(object):
         )
 
         # classify the values of the fully-connected tanh layer
-        num_of_class = 101 # divided into 101 classes        
-        self.classifier = LogisticRegression(input=layer2.output, n_in=n_out_2, n_out=num_of_class)
+        classes = 101 # divided into 101 classes        
+        self.classifier = LogisticRegression(input=layer2.output, n_in=n_out_2, n_out=classes)
 
         # cost = negative log likelihood in symbolic format
         cost = self.classifier.negative_log_likelihood(y)
