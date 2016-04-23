@@ -8,6 +8,7 @@ import os
 import sys
 import timeit
 import pickle
+from ngram import *
 
 def predict(file_name):
     """
@@ -40,3 +41,8 @@ if __name__ == '__main__':
     data_dir = os.path.join('data',sub_dirs[1])
     for file_name in os.listdir(data_dir):
         predict(file_name)
+        
+
+        
+        
+        

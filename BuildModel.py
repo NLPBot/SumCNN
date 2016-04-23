@@ -76,7 +76,7 @@ class BuildModel(object):
         #wv = T.matrix('wv') # data from vectors
         y = T.ivector('y')  # probs, presented as 1D vector of [int] labels
 
-        feature_num = 220
+        feature_num = 221
         
         ####### word2vec #######
         #word2vec_num = 300

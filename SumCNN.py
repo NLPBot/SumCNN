@@ -14,7 +14,7 @@ import sys
 import timeit
 import pickle
 
-def sgd_optimization_sum(learning_rate=0.13, n_epochs=500,
+def sgd_optimization_sum(learning_rate=0.13, n_epochs=5000,
                            dataset='sum.pkl',
                            batch_size=100):
     """

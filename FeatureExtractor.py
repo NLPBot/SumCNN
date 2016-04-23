@@ -8,20 +8,26 @@ from som import *
 import gensim
 import numpy as np
 import xml.etree.ElementTree as ET
+from ngram import *
+import string
 
 def load_word2vec():
     return gensim.models.Word2Vec.load_word2vec_format('GoogleNews-vectors-negative300.bin',binary=True)
-    
-def get_sim(topic_dict,sent,summary,model,stopwords,file_name):
+
+def get_sim(sent,summary,stopwords):
+    return get_ngram_sim(sent.split(),summary.split())
+
+def get_semantic_score(model,topic_dict,sent,file_name):
     gold_sum = []
-    for word in (summary.split()+topic_dict[file_name][0].split()+topic_dict[file_name][1].split()):
-        if str(word) in model and str(word) not in stopwords: 
+    corpus = ' '.join(list(topic_dict[file_name])).split()
+    for word in (corpus):
+        if str(word) in model: 
             gold_sum.append( word )
     score = model.n_similarity(gold_sum, sent.split())
     if "array" in str(type(score)):
         return 0.0
     return score
-
+    
 def read_gold_sum(model):
     sum_dict = {}
     gold_sum = ''
@@ -56,6 +62,10 @@ def get_num_of_punc(sent_list,punc):
             count += 1
     return count
 
+def remove_punc(s):
+    exclude = set(string.punctuation)
+    return ''.join(ch for ch in s if ch not in exclude)
+
 def get_topics():
     topic_dict = {}
     data_dir = os.path.join('data')
@@ -63,8 +73,10 @@ def get_topics():
     root = tree.getroot()
     for topic in root:
         id = topic.attrib['id'][:5]
-        title = ' '.join(topic[0].text.split())
-        narrative = ' '.join(topic[1].text.split())
+        title = ' '.join(str(topic[0].text).split())
+        narrative = ' '.join(str(topic[1].text).split())
+        title = remove_punc(title)
+        narrative = remove_punc(narrative)
         topic_dict[id] = (title,narrative)
         #print(id+' '+title+' '+narrative)
     return topic_dict
@@ -132,7 +144,8 @@ def get_data_pair(predict=False):
                     if str(word) in model and str(word) not in stopwords: 
                         word2vec_sent += word + ' '
 
-            # 30 features
+            feat_vec.append(float(get_semantic_score(model,topic_dict,word2vec_sent,file_name[:5])))
+
             # get list of tf-idf scores
             tfidf = []
             for score in x['order']['word']['tfidf']:
@@ -148,16 +161,14 @@ def get_data_pair(predict=False):
             if not(predict):
                 score = 0.0
                 for summary in sum_dict[file_name[:5]]:
-                    score += get_sim(topic_dict,word2vec_sent,summary,model,stopwords,file_name[:5]) # to get similarity score
+                    score += get_sim(word2vec_sent,summary,stopwords) # to get similarity score
                     doc_num = len(sum_dict[file_name[:5]])
                 score = get_score_label(float(score/doc_num))
                 if score<0: score = 0
                 scores.append(score)
 
-            if predict:
-                p_feat_vec_list.append( feat_vec )
-        if predict: 
-            pickle.dump( ( pre_actual_sent_list, p_feat_vec_list, pos_list ), open('predict/'+file_name,'wb'),2 )
+            if predict: p_feat_vec_list.append( feat_vec )
+        if predict: pickle.dump( ( pre_actual_sent_list, p_feat_vec_list, pos_list ), open('predict/'+file_name,'wb'),2 )
 
     print('Total datasets: ' + str(len(feat_vec_list)) )
     print('Unique_scores: ' + str( len(set(scores)) ) )
@@ -173,3 +184,5 @@ if __name__=="__main__":
     else:
         pickle.dump( get_data_pair(predict=predict), open('sum.pkl','wb'),2 )
         print( "There are " + str(feat_num) + ' features')
+        
+        
