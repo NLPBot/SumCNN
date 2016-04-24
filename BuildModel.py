@@ -76,7 +76,7 @@ class BuildModel(object):
         #wv = T.matrix('wv') # data from vectors
         y = T.ivector('y')  # probs, presented as 1D vector of [int] labels
 
-        feature_num = 221
+        feature_num = 282
         
         ####### word2vec #######
         #word2vec_num = 300
@@ -129,6 +129,7 @@ class BuildModel(object):
         n_in_0 = feature_num
         #n_in_0 = nkerns*(v_height-filter_height+1)/pool_height + feature_num
         layer_dim = [ n_in_0/3*2, n_in_0/9*4 ]
+        #layer_dim = [ 100, 50 ]
         n_out_0 = layer_dim[0]
 
         # first fully-connected tanh layer

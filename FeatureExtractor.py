@@ -10,89 +10,21 @@ import numpy as np
 import xml.etree.ElementTree as ET
 from ngram import *
 import string
-
-def load_word2vec():
-    return gensim.models.Word2Vec.load_word2vec_format('GoogleNews-vectors-negative300.bin',binary=True)
-
-def get_sim(sent,summary,stopwords):
-    return get_ngram_sim(sent.split(),summary.split())
-
-def get_semantic_score(model,topic_dict,sent,file_name):
-    gold_sum = []
-    corpus = ' '.join(list(topic_dict[file_name])).split()
-    for word in (corpus):
-        if str(word) in model: 
-            gold_sum.append( word )
-    score = model.n_similarity(gold_sum, sent.split())
-    if "array" in str(type(score)):
-        return 0.0
-    return score
-    
-def read_gold_sum(model):
-    sum_dict = {}
-    gold_sum = ''
-    data_dir = os.path.join('data','feat_other_sent')
-
-    print('reading gold summaries...')
-    for file_name in os.listdir(data_dir):
-        with open('data/feat_other_sent/'+file_name) as data_file:
-            data = json.load(data_file)
-        for x in data['data']['documents']['document']:
-            gold_sum = ''
-            for word in x['order']['lemma']['text']:
-                # get summary
-                gold_sum += word + ' '
-            if file_name[:5] not in sum_dict.keys(): 
-                sum_dict[file_name[:5]] = [ gold_sum ]
-            else:
-                sum_dict[file_name[:5]].append( gold_sum )
-    print('Done reading gold summaries...')
-    return sum_dict
-
-def get_ratio(e,total):
-    return float(e)/float(total)
-
-def get_score_label(score):
-    return int(score*100)
-
-def get_num_of_punc(sent_list,punc):
-    count = 0
-    for word in sent_list:
-        if word in punc:
-            count += 1
-    return count
-
-def remove_punc(s):
-    exclude = set(string.punctuation)
-    return ''.join(ch for ch in s if ch not in exclude)
-
-def get_topics():
-    topic_dict = {}
-    data_dir = os.path.join('data')
-    tree = ET.parse('data/UpdateSumm09_test_topics.xml')
-    root = tree.getroot()
-    for topic in root:
-        id = topic.attrib['id'][:5]
-        title = ' '.join(str(topic[0].text).split())
-        narrative = ' '.join(str(topic[1].text).split())
-        title = remove_punc(title)
-        narrative = remove_punc(narrative)
-        topic_dict[id] = (title,narrative)
-        #print(id+' '+title+' '+narrative)
-    return topic_dict
+from feat_helper import *
 
 def get_data_pair(predict=False):
-    global feat_num
+    global feat_num, sum_terms
 
     # setting up
     feat_vec_list, scores = [], []
     score = 0
-    if not(predict): 
-        model = load_word2vec()
-        sum_dict = read_gold_sum(model)
-        topic_dict = get_topics()
+    
+    model = load_word2vec()
+    topic_dict = get_topics()
     stopwords = nltk.corpus.stopwords.words('english')
-
+    if not(predict):     
+        sum_dict = read_gold_sum(model)
+        
     sub_dirs = ['feat_docs_para','feat_docs_sent','feat_model_para','feat_model_sent']
     data_dir = os.path.join('data',sub_dirs[1])
     for file_name in os.listdir(data_dir):
@@ -105,6 +37,7 @@ def get_data_pair(predict=False):
         for x in data['data']['documents']['document']:
             # append feature list
             feat_vec = []
+            
             # 20 features
             feat_vec.append(x['conj']['+'])
             feat_vec.append(x['conj']['-'])
@@ -130,22 +63,25 @@ def get_data_pair(predict=False):
             feat_vec.append(get_num_of_punc(x['order']['word']['text'],')'))
             feat_vec.append(get_num_of_punc(x['order']['word']['text'],'('))
             feat_vec.append(get_num_of_punc(x['order']['word']['text'],'/'))
-
+            
             # get actual sentence
             word2vec_sent = ''
             if predict:
                 pre_actual_sent = ''
                 for word in x['order']['word']['text']:
-                    if str(word) not in stopwords:
-                        pre_actual_sent += word + ' '
+                    pre_actual_sent += word + ' '
                 pre_actual_sent_list.append(pre_actual_sent) 
             else:
                 for word in x['order']['lemma']['text']:
-                    if str(word) in model and str(word) not in stopwords: 
+                    if str(word) in model: 
                         word2vec_sent += word + ' '
 
+            # adding linguistic features
+            # https://msu.edu/~jdowell/135/transw.html
             feat_vec.append(float(get_semantic_score(model,topic_dict,word2vec_sent,file_name[:5])))
-
+            for term in sum_terms:
+                feat_vec.append(contains_term(term,word2vec_sent))
+            
             # get list of tf-idf scores
             tfidf = []
             for score in x['order']['word']['tfidf']:
