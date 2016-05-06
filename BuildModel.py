@@ -8,6 +8,7 @@ from theano import tensor as T
 import numpy as np
 import numpy
 from LogisticRegression import *
+from LinearRegression import *
 import six.moves.cPickle as pickle
 import gzip
 import os
@@ -19,7 +20,7 @@ from theano.tensor.nnet import conv2d
 import pickle
 
 class BuildModel(object):
-    def __init__(self,learning_rate=0.13, n_epochs=5000,
+    def __init__(self,learning_rate=0.00001, n_epochs=5000,
                            dataset='sum.pkl',
                            batch_size=100, feature_num=282):
         """
@@ -187,11 +188,11 @@ class BuildModel(object):
         )
 
         # classify the values of the fully-connected tanh layer
-        classes = 101 # divided into 101 classes        
-        self.classifier = LogisticRegression(input=layer2.output, n_in=n_out_2, n_out=classes)
+        classes = 30 # divided into 101 classes        
+        self.classifier = LinearRegression(input=layer2.output, n_in=n_out_2, n_out=1)
 
         # cost = negative log likelihood in symbolic format
-        cost = self.classifier.negative_log_likelihood(y)
+        cost = self.classifier.errors(y)
 
         # batch_size == row size == weight vector row size
         self.test_model = theano.function(
