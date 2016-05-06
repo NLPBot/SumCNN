@@ -4,9 +4,9 @@ import os, pickle, sys
 from SentSim import *
 import nltk
 from nltk.corpus import stopwords
-from som import *
 import gensim
 import numpy as np
+from numpy import *
 import xml.etree.ElementTree as ET
 from ngram import *
 import string
@@ -16,7 +16,7 @@ def get_data_pair(predict=False):
     global feat_num, sum_terms
 
     # setting up
-    feat_vec_list, scores = [], []
+    feat_vec_list, scores, word_vec_list = [], [], []
     score = 0
     
     model = load_word2vec()
@@ -66,6 +66,12 @@ def get_data_pair(predict=False):
             
             # get actual sentence
             word2vec_sent = ''
+            word_vecs = []
+            for word in x['order']['lemma']['text']:
+                if str(word) in model:
+                    word_vecs.append( [float(i) for i in model[word]] ) 
+            word_vec_list.append( (np.sum(np.array(word_vecs),0)).tolist() )
+
             if predict:
                 pre_actual_sent = ''
                 for word in x['order']['word']['text']:
@@ -108,7 +114,7 @@ def get_data_pair(predict=False):
 
     print('Total datasets: ' + str(len(feat_vec_list)) )
     print('Unique_scores: ' + str( len(set(scores)) ) )
-    return ( feat_vec_list, scores )
+    return ( feat_vec_list, scores, word_vec_list )
 
 if __name__=="__main__":
     global feat_num
