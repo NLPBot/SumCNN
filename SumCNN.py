@@ -16,7 +16,7 @@ import pickle
 
 def sgd_optimization_sum(learning_rate=0.13, n_epochs=1000,
                            dataset='sum.pkl',
-                           batch_size=200):
+                           batch_size=200, feature_num=282):
     """
     Gradient descent optimization of a log-linear
     model
@@ -40,7 +40,8 @@ def sgd_optimization_sum(learning_rate=0.13, n_epochs=1000,
     models = BuildModel( 	learning_rate=0.13, 
     						n_epochs=5000,
                 			dataset='sum.pkl',
-                			batch_size=batch_size )
+                			batch_size=batch_size,
+                            feature_num=282 )
 
     ###############
     # TRAIN MODEL #
@@ -112,7 +113,8 @@ def sgd_optimization_sum(learning_rate=0.13, n_epochs=1000,
                         )
                     )
                     # save the best model
-                    with open('model.pkl', 'wb') as f:
+                    name = 'model.pkl_'+str(learning_rate)+'_'+str(n_epochs)+'_'+str(batch_size)+'_'+str(feature_num)
+                    with open(name, 'wb') as f:
                         pickle.dump(models.classifier, f)
 
             if patience <= iter:
