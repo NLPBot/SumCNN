@@ -4,7 +4,6 @@ import os, pickle, sys
 from SentSim import *
 import nltk
 from nltk.corpus import stopwords
-from som import *
 import gensim
 import numpy as np
 import xml.etree.ElementTree as ET
@@ -23,7 +22,10 @@ sum_terms = [ 'and', 'also', 'in fact', 'actually', 'nor', 'too', 'on the other 
             'since', 'owing to' ]
 
 def load_word2vec():
-    return gensim.models.Word2Vec.load_word2vec_format('GoogleNews-vectors-negative300.bin',binary=True)
+    model = gensim.models.Word2Vec.load_word2vec_format('GoogleNews-vectors-negative300.bin',binary=True)
+    return model
+    #model.save('Word2Vec')
+    #return gensim.models.Word2Vec.load('Word2Vec')
 
 def get_sim(sent,summary,stopwords):
     return get_ngram_sim(sent.split(),summary.split())

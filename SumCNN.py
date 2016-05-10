@@ -6,7 +6,8 @@ http://deeplearning.net/tutorial/code/logistic_sgd.py
 import theano
 from theano import tensor as T
 import numpy as np
-from BuildModel import *
+#from BuildModel import *
+from OldBuildModel import *
 import six.moves.cPickle as pickle
 import gzip
 import os
@@ -14,9 +15,9 @@ import sys
 import timeit
 import pickle
 
-def sgd_optimization_sum(learning_rate=0.00001, n_epochs=1000,
+def sgd_optimization_sum(learning_rate=0.013, n_epochs=10000,
                            dataset='sum.pkl',
-                           batch_size=200, feature_num=282):
+                           batch_size=1000, feature_num=275):
     """
     Gradient descent optimization of a log-linear
     model
@@ -38,10 +39,10 @@ def sgd_optimization_sum(learning_rate=0.00001, n_epochs=1000,
     # MODEL SETUP #
     ###############
     models = BuildModel( 	learning_rate=learning_rate, 
-    						n_epochs=5000,
+    						n_epochs=n_epochs,
                 			dataset='sum.pkl',
                 			batch_size=batch_size,
-                            feature_num=282 )
+                            feature_num=feature_num )
 
     ###############
     # TRAIN MODEL #
@@ -113,7 +114,7 @@ def sgd_optimization_sum(learning_rate=0.00001, n_epochs=1000,
                         )
                     )
                     # save the best model
-                    name = 'model.pkl_'+str(learning_rate)+'_'+str(n_epochs)+'_'+str(batch_size)+'_'+str(feature_num)
+                    name = 'models/'+str(learning_rate)+'_'+str(n_epochs)+'_'+str(batch_size)+'_'+str(feature_num) + '_model.pkl' 
                     with open(name, 'wb') as f:
                         pickle.dump(models.classifier, f)
 
@@ -133,24 +134,6 @@ def sgd_optimization_sum(learning_rate=0.00001, n_epochs=1000,
     print('The code run for %d epochs, with %f epochs/sec' % (  \
         epoch, 1. * epoch / (end_time - start_time)))
     #print(('The code for file '+os.path.split(__file__)[1] + ' ran for %.1fs' % ((end_time - start_time))), file=sys.stderr)
- 
-def predict():
-    """
-    load a trained model and use it to predict prob.
-    """
-
-    # load the saved model
-    classifier = pickle.load(open('model.pkl'))
-
-    # compile a predictor function
-    predict_model = theano.function(
-        inputs=[classifier.input],
-        outputs=classifier.y_pred)
-
-    test_set_x = [[0, 0, 0, 0, 0, 0, 199, 0, 0, 0,0,0]]
-    predicted_values = predict_model(test_set_x)
-    print("Predicted values")
-    print(predicted_values)
 
 if __name__ == '__main__':
     sgd_optimization_sum()

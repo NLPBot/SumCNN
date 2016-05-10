@@ -20,9 +20,9 @@ from theano.tensor.nnet import conv2d
 import pickle
 
 class BuildModel(object):
-    def __init__(self,learning_rate=0.13, n_epochs=50000,
+    def __init__(self,learning_rate=0.5, n_epochs=50000,
                            dataset='sum.pkl',
-                           batch_size=100, feature_num=282):
+                           batch_size=100, feature_num=74):
         """
         stochastic gradient descent optimization of a log-linear model
 
@@ -44,25 +44,25 @@ class BuildModel(object):
 
         datasets = self.load_data(dataset,batch_size)
 
-        train_set_x, train_set_y, train_set_z = datasets[0]
-        valid_set_x, valid_set_y, valid_set_z = datasets[1]
-        test_set_x, test_set_y, test_set_z = datasets[2]
-        
+        train_set_x, train_set_y = datasets[0]
+        valid_set_x, valid_set_y = datasets[1]
+        test_set_x, test_set_y = datasets[2]
+
         print( 'train_set_x dimensions ' + str(train_set_x.get_value(borrow=True).shape[0]) + ' ' + 
             str(train_set_x.get_value(borrow=True).shape[1]) )
         print( 'valid_set_x dimensions ' + str(valid_set_x.get_value(borrow=True).shape[0]) + ' ' + 
             str(valid_set_x.get_value(borrow=True).shape[1]) )
         print( 'test_set_x dimensions ' + str(test_set_x.get_value(borrow=True).shape[0]) + ' ' + 
             str(test_set_x.get_value(borrow=True).shape[1]) )
-        
+
         # compute number of minibatches for training, validation and testing
         self.n_train_batches = train_set_x.get_value(borrow=True).shape[0] // batch_size
         self.n_valid_batches = valid_set_x.get_value(borrow=True).shape[0] // batch_size
         self.n_test_batches = test_set_x.get_value(borrow=True).shape[0] // batch_size
 
-        #print( 'n_train_batches ' + str(self.n_train_batches) )
-        #print( 'n_valid_batches ' + str(self.n_valid_batches) )
-        #print( 'n_test_batches ' + str(self.n_test_batches) +'\n' )
+        print( 'n_train_batches ' + str(self.n_train_batches) )
+        print( 'n_valid_batches ' + str(self.n_valid_batches) )
+        print( 'n_test_batches ' + str(self.n_test_batches) +'\n' )
 
         ######################
         # BUILD ACTUAL MODEL #
@@ -74,14 +74,16 @@ class BuildModel(object):
 
         # generate symbolic variables for input (x and y represent a minibatch)
         x = T.matrix('x')  # data from features
-        wv = T.matrix('wv') # data from vectors
+        #wv = T.matrix('wv') # data from vectors
         y = T.ivector('y')  # probs, presented as 1D vector of [int] labels
 
-        ###### feature ###### word2vec ######
-        word2vec_num = 300
+        feature_num = feature_num
+        
+        ####### word2vec #######
+        #word2vec_num = 300
 
         ####################### start of CNN #########################
-        
+        """
         # Initialize parameters
         rng = numpy.random.RandomState(23455)
         nkerns=200
@@ -115,42 +117,17 @@ class BuildModel(object):
         # This will generate a matrix of shape (batch_size, nkerns*6*1),
         # or (2, 20 * 6 * 1) = (2, 120) with the default values.
         conv_layer_output = conv_layer.output.flatten(2)
-        
+        """
         ####################### End of CNN ##############################
-        ####################### Start of concatenation ##################
-
-        word2vec_in = nkerns*(v_height-filter_height+1)/pool_height
-        feature_in = feature_num
-        n_out = 100
-
-        # first fully-connected tanh layer
-        word2vec_hidden = HiddenLayer(
-            rng,
-            input=conv_layer_output,
-            n_in=word2vec_in,
-            n_out=n_out,
-            activation=T.tanh
-        )
-        
-        # first fully-connected tanh layer
-        feature_hidden = HiddenLayer(
-            rng,
-            input=x,
-            n_in=feature_in,
-            n_out=n_out,
-            activation=T.tanh
-        )
-        
-        concat = word2vec_hidden.output + feature_hidden.output
-
-        ####################### End of concatenation #####################
 
         ## Concatenate x with word2vec ##
-        input_x = concat
+        #input_x = T.concatenate( [x,conv_layer_output], axis=0 )
+        #input_x = conv_layer_output
+        input_x = x
         
         # Set up vars
         rng = numpy.random.RandomState(23455)
-        n_in_0 = n_out
+        n_in_0 = feature_num
         #n_in_0 = nkerns*(v_height-filter_height+1)/pool_height + feature_num
         layer_dim = [ n_in_0/3*2, n_in_0/9*4 ]
         #layer_dim = [ 100, 50 ]
@@ -188,7 +165,7 @@ class BuildModel(object):
         )
 
         # classify the values of the fully-connected tanh layer
-        classes = 30 # divided into 101 classes        
+        classes = 101 # divided into 101 classes        
         self.classifier = LinearRegression(input=layer2.output, n_in=n_out_2, n_out=1)
 
         # cost = negative log likelihood in symbolic format
@@ -200,8 +177,8 @@ class BuildModel(object):
             outputs=self.classifier.errors(y),
             givens={
                 x: test_set_x[index * batch_size: (index + 1) * batch_size],
-                y: test_set_y[index * batch_size: (index + 1) * batch_size],
-                wv: test_set_z[index * batch_size: (index + 1) * batch_size]
+                y: test_set_y[index * batch_size: (index + 1) * batch_size]
+                #wv: test_set_z[index * batch_size: (index + 1) * batch_size]
             }
         )
 
@@ -210,13 +187,13 @@ class BuildModel(object):
             outputs=self.classifier.errors(y),
             givens={
                 x: valid_set_x[index * batch_size: (index + 1) * batch_size],
-                y: valid_set_y[index * batch_size: (index + 1) * batch_size],
-                wv: valid_set_z[index * batch_size: (index + 1) * batch_size]
+                y: valid_set_y[index * batch_size: (index + 1) * batch_size]
+                #wv: valid_set_z[index * batch_size: (index + 1) * batch_size]
             }
         )
 
         # create a update list by gradient descent
-        params = feature_hidden.params + word2vec_hidden.params + layer2.params + layer1.params + layer0.params + [self.classifier.W, self.classifier.b] + conv_layer.params 
+        params = layer2.params + layer1.params + layer0.params + [self.classifier.W, self.classifier.b] #+ conv_layer.params 
         grads = T.grad(cost, params)
         updates = [
             (param_i, param_i - learning_rate * grad_i)
@@ -230,8 +207,8 @@ class BuildModel(object):
             updates=updates,
             givens={
                 x: train_set_x[index * batch_size: (index + 1) * batch_size],
-                y: train_set_y[index * batch_size: (index + 1) * batch_size],
-                wv: train_set_z[index * batch_size: (index + 1) * batch_size]
+                y: train_set_y[index * batch_size: (index + 1) * batch_size]
+                #wv: train_set_z[index * batch_size: (index + 1) * batch_size]
             }
         )
         
@@ -250,34 +227,27 @@ class BuildModel(object):
         valid_set = data
         test_set = data
 
-        def shared_dataset(data_xyz, borrow=True):
+        def shared_dataset(data_xy, borrow=True):
             """ Function that loads the dataset into shared variables
             """
-            l = []
-            data_x, data_y, data_z = data_xyz
-            new_data_x, new_data_y, new_data_z = [], [], []
-            for x, y, z in zip(data_x,data_y,data_z):
-                if type(l)==type(z):
-                    new_data_x.append(x)
-                    new_data_y.append(y)
-                    new_data_z.append(z)
-
-            shared_x = theano.shared(numpy.asarray(new_data_x,
+            data_x, data_y, z = data_xy
+            shared_x = theano.shared(numpy.asarray(data_x,
                                                    dtype=theano.config.floatX),
                                      borrow=borrow)
-            shared_y = theano.shared(numpy.asarray(new_data_y,
+            shared_y = theano.shared(numpy.asarray(data_y,
                                                    dtype=theano.config.floatX),
                                      borrow=borrow)    
-            shared_z = theano.shared(numpy.asarray(new_data_z,
-                                                   dtype=theano.config.floatX),
-                                     borrow=borrow)                      
+            #shared_z = theano.shared(numpy.asarray(data_z,
+            #                                       dtype=theano.config.floatX),
+            #                         borrow=borrow)                                    
 
-            return shared_x, T.cast(shared_y, 'int32'), shared_z 
+            return shared_x, T.cast(shared_y, 'int32')#, shared_z
 
-        test_set_x, test_set_y, test_set_z = shared_dataset(test_set)
-        valid_set_x, valid_set_y, valid_set_z = shared_dataset(valid_set)
-        train_set_x, train_set_y, train_set_z = shared_dataset(train_set)
+        test_set_x, test_set_y = shared_dataset(test_set)
+        valid_set_x, valid_set_y = shared_dataset(valid_set)
+        train_set_x, train_set_y = shared_dataset(train_set)
 
-        rval = [(train_set_x, train_set_y, train_set_z), (valid_set_x, valid_set_y, valid_set_z),
-                (test_set_x, test_set_y, test_set_z)]
+        rval = [(train_set_x, train_set_y), (valid_set_x, valid_set_y),
+                (test_set_x, test_set_y)]
         return rval
+

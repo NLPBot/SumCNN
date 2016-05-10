@@ -55,6 +55,7 @@ def get_data_pair(predict=False):
             feat_vec.append(get_ratio(float(x['position']['sentence']['paragraph']['forward']),total))
             feat_vec.append(x['ratio']['punct']['word'][0])
             feat_vec.append(x['ratio']['punct']['word'][1])
+            """
             feat_vec.append(get_num_of_punc(x['order']['word']['text'],'"'))
             feat_vec.append(get_num_of_punc(x['order']['word']['text'],'.'))
             feat_vec.append(get_num_of_punc(x['order']['word']['text'],'?'))
@@ -63,6 +64,7 @@ def get_data_pair(predict=False):
             feat_vec.append(get_num_of_punc(x['order']['word']['text'],')'))
             feat_vec.append(get_num_of_punc(x['order']['word']['text'],'('))
             feat_vec.append(get_num_of_punc(x['order']['word']['text'],'/'))
+            """
             
             # get actual sentence
             word2vec_sent = ''
@@ -71,6 +73,8 @@ def get_data_pair(predict=False):
                 if str(word) in model:
                     word_vecs.append( [float(i) for i in model[word]] ) 
             word_vec_list.append( (np.sum(np.array(word_vecs),0)).tolist() )
+
+            feat_vec.append(len(x['order']['lemma']['text'])) # get length
 
             if predict:
                 pre_actual_sent = ''
@@ -84,16 +88,19 @@ def get_data_pair(predict=False):
 
             # adding linguistic features
             # https://msu.edu/~jdowell/135/transw.html
+            
             feat_vec.append(float(get_semantic_score(model,topic_dict,word2vec_sent,file_name[:5])))
             for term in sum_terms:
                 feat_vec.append(contains_term(term,word2vec_sent))
             
+
             # get list of tf-idf scores
             tfidf = []
             for score in x['order']['word']['tfidf']:
                 tfidf.append(score)
             tfidf.extend( [0.]*(200-len(tfidf)) )
             feat_vec.extend(tfidf) # temporary
+            
             
             # append x_set, y_set
             feat_num = len(feat_vec)
@@ -104,8 +111,9 @@ def get_data_pair(predict=False):
                 score = 0.0
                 for summary in sum_dict[file_name[:5]]:
                     score += get_sim(word2vec_sent,summary,stopwords) # to get similarity score
-                    doc_num = len(sum_dict[file_name[:5]])
-                score = get_score_label(float(score/doc_num))
+                doc_num = len(sum_dict[file_name[:5]])
+                score = float(score/doc_num)*100.
+                #score = get_score_label(float(score/doc_num))
                 if score<0: score = 0
                 scores.append(score)
 

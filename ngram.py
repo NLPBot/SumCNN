@@ -79,8 +79,8 @@ def get_ngram_sim(sent,summary):
     return (uni_score*0.10+bi_score*0.50+tri_score*0.25+quad_score*0.15)
     
 if __name__=="__main__":
-    sent = ['i','am','hungry','what','are','u']
-    summary = ['i','am','hungry','what','about','you']
+    sent = ['i','am','hungry']
+    summary = ['j','sdf','sdf','i','u','a','what','hungry']
     print('score is '+str(get_ngram_sim(sent,summary)))
     
     

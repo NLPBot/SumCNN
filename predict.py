@@ -10,12 +10,12 @@ import timeit
 import pickle
 from ngram import *
 
-def predict(file_name):
+def predict(file_name,model_name):
     """
     load a trained model and use it to predict prob.
     """
     # load the saved model
-    classifier = pickle.load(open('model.pkl'))
+    classifier = pickle.load(open(model_name))
     data_xy = pickle.load( open( 'predict/'+file_name, "rb" ) )
     actual_sent_list, data_x, pos_list = data_xy
 
@@ -40,7 +40,7 @@ if __name__ == '__main__':
     sub_dirs = ['feat_docs_para','feat_docs_sent','feat_model_para','feat_model_sent']
     data_dir = os.path.join('data',sub_dirs[1])
     for file_name in os.listdir(data_dir):
-        predict(file_name)
+        predict(file_name,sys.argv[1])
         
 
         
