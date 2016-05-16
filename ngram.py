@@ -35,6 +35,17 @@ def get_quad_gram_dict(word_list):
         term = ' '.join(list(term))
         quad_dict[term] = 1 
     return quad_dict
+
+def get_penta_gram_dict(word_list):
+    quad_dict = defaultdict(int)
+    d = find_ngrams(word_list,5)
+    for term in d:
+        term = ' '.join(list(term))
+        quad_dict[term] = 1 
+    return quad_dict
+
+def get_5_grams(s):
+    return [ k for k in get_penta_gram_dict(s.split()).keys() ]
     
 def get_ngram_sim(sent,summary):
 

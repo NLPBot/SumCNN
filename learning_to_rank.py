@@ -10,8 +10,8 @@ import xml.etree.ElementTree as ET
 from ngram import *
 import string
 from feat_helper import *
-
-def get_sents(file_name,model):
+    
+def get_sents(file_name,model,stopwords):
     sents, pos_list = [], []
     with open(file_name) as data_file:    
         data = json.load(data_file)
@@ -19,18 +19,19 @@ def get_sents(file_name,model):
         # get actual sentence
         sent = ''
         for word in x['order']['lemma']['text']:
-            if str(word) in model: 
+            if str(word) in model and str(word) not in stopwords: 
                 sent += word + ' '
         if sent=='': continue
-        sents.append(sent)
+        sents.append(remove_sum_terms(sent))
+        #sents.extend(get_5_grams(remove_sum_terms(sent)))
         pos_list.append( float(x['position']['paragraph']['forward']) )
     return sents, pos_list
 
-def rank(to_be_ranked,stopwords,model,file_name,topic_dict):
+def rank(to_be_ranked,stopwords,model,file_name,topic_dict,doc_topics_dict):
     sentList = []
     for (sent_a,pos_list_a) in to_be_ranked:
         score = 0.
-        semanSim = float(get_semantic_score(model,topic_dict,sent_a,file_name[:5]))
+        semanSim = float(get_semantic_score(model,topic_dict,sent_a,file_name[:5])) + float(get_semantic_score(model,doc_topics_dict,sent_a,file_name[:5]))
         for (sent_b,pos_list_b) in to_be_ranked:
             ngramSim = get_sim(sent_a,sent_b,stopwords)
             between_semanSim = model.n_similarity(sent_a.split(),sent_b.split())
@@ -46,47 +47,26 @@ if __name__ == '__main__':
     stopwords = nltk.corpus.stopwords.words('english')
     model = load_word2vec()
     topic_dict = get_topics()
+    doc_topics_dict = get_doc_topics_dict()
     sub_dirs = ['feat_docs_para','feat_docs_sent','feat_model_para','feat_model_sent']
     data_dir = os.path.join('data',sub_dirs[1])
-
-    # read all files    
-    file_to_tuple = {}
+    
     for file_name in os.listdir(data_dir):
         path_to_file = 'data/'+sub_dirs[1]+'/'+file_name
 
         # get sentences for this file
-        (sents,pos_list) = get_sents(path_to_file,model)
-        if file_name[:6] not in file_to_tuple.keys():
-            file_to_tuple[file_name[:6]] = (sents,pos_list)
-        else:
-            file_to_tuple[file_name[:6]][0].extend(sents)
-            file_to_tuple[file_name[:6]][1].extend(pos_list)
-
-    for file_name in file_to_tuple:
-        print(' .'.join(file_to_tuple[file_name][0]))
-        pickle.dump( ' .'.join(file_to_tuple[file_name][0]), open('result/'+file_name+'.pkl','wb') )
-
-    """
-
-    # iterate through all topic
-    for file_name in file_to_tuple:
-        #print(file_name)
-
-        sents = file_to_tuple[file_name][0]
-        pos_list = file_to_tuple[file_name][1]
+        (sents,pos_list) = get_sents(path_to_file,model,stopwords)
         to_be_ranked = zip(sents,pos_list)
-
+        
         # rank 
-        result = rank(to_be_ranked,stopwords,model,file_name,topic_dict)
+        result = rank(to_be_ranked,stopwords,model,file_name,topic_dict,doc_topics_dict)
 
-        #print(result)
-        #print('Scores: '+str(result) )
-        pickle.dump( result, open('result/'+file_name+'.pkl','wb') )
+        #print(result.encode('ascii', 'ignore').decode('ascii'))
+        # print('Scores: '+str(result.encode('utf-8')) )
+        pickle.dump( result, open('result/'+file_name[:30]+'.pkl','wb') )
+
     
-    
-    """
-    
-    
+        
     
     
     
